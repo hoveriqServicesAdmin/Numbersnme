@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Products - NumbersNMe</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:400,500,600&display=fallback">
+    <style>
+        /* Dark numerology theme override */
+        .page-hero {
+            background: #0a0a0a;
+            position: relative;
+            overflow: hidden;
+            padding: 80px 20px;
+        }
+        .page-hero canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .page-hero h1,
+        .page-hero p {
+            position: relative;
+            z-index: 2;
+        }
+        .page-hero h1 {
+            text-shadow: 0 0 20px rgba(212,175,55,0.4);
+            color: #d4af37;
+        }
+        .page-hero p {
+            color: rgba(255,255,255,0.8);
+        }
+
+        .page-content {
+            background: #111;
+            padding-bottom: 60px;
+        }
+        .page-content h2 {
+            color: #d4af37;
+        }
+        .page-content > p {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .service-card {
+            background: #1a1a2e !important;
+            border: 1px solid rgba(212,175,55,0.15);
+        }
+        .service-card:hover {
+            box-shadow: 0 12px 30px rgba(212,175,55,0.12) !important;
+        }
+        .product-card .product-info h3 {
+            color: #d4af37;
+        }
+        .product-card .product-info .product-desc {
+            color: rgba(255,255,255,0.6);
+        }
+        .product-card .product-slider {
+            background: #111 !important;
+        }
+
+        /* How to Order section */
+        .page-content ol {
+            color: rgba(255,255,255,0.7);
+        }
+        .page-content ol strong {
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* CTA buttons on dark background */
+        .page-content a.ast-custom-button,
+        .product-card .ast-custom-button {
+            background: linear-gradient(135deg, #d4af37, #b8962e) !important;
+            color: #0a0a0a !important;
+            border-color: #d4af37 !important;
+            font-weight: 600;
+        }
+        .page-content a.ast-custom-button:hover,
+        .product-card .ast-custom-button:hover {
+            background: linear-gradient(135deg, #e5c347, #c9a73f) !important;
+            transform: translateY(-1px);
+        }
+
+        /* Footer blending */
+        #content {
+            background: #111;
+        }
+
+        .slider-btn:hover { background: rgba(212,175,55,0.8) !important; }
+        .slider-dots .dot:hover { opacity: 1 !important; }
+
+        .product-card {
+            padding: 0 !important;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .product-card .product-slider {
+            position: relative;
+            height: 280px;
+        }
+        .product-card .product-slider img {
+            width: 100%;
+            height: 280px;
+            object-fit: contain;
+            border-radius: 8px 8px 0 0;
+        }
+        .product-card .product-info {
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+        .product-card .product-info .product-price {
+            margin: 0 0 10px;
+            font-weight: 600;
+            color: #d4af37;
+        }
+    </style>
+</head>
+<body class="page ast-desktop ast-separate-container ast-no-sidebar">
+    <div class="hfeed site" id="page">
+
+        <!-- ============ HEADER ============ -->
+        <header class="site-header header-main-layout-1 ast-primary-menu-enabled ast-logo-title-inline ast-hide-custom-menu-mobile ast-builder-menu-toggle-icon ast-mobile-header-inline" id="masthead">
+            <!-- Desktop Header -->
+            <div id="ast-desktop-header" data-toggle-type="dropdown">
+                <div class="ast-main-header-wrap main-header-bar-wrap">
+                    <div class="ast-primary-header-bar ast-primary-header main-header-bar site-header-focus-item">
+                        <div class="site-primary-header-wrap ast-builder-grid-row-container site-header-focus-item ast-container">
+                            <div class="ast-builder-grid-row ast-builder-grid-row-has-sides ast-builder-grid-row-no-center">
+                                <div class="site-header-primary-section-left site-header-section ast-flex site-header-section-left">
+                                    <div class="ast-builder-layout-element ast-flex site-header-focus-item" data-section="title_tagline">
+                                        <div class="site-branding ast-site-identity">
+                                            <span class="site-logo-img">
+                                                <a href="index.html" class="custom-logo-link" rel="home">
+                                                    <img width="168" height="83" src="https://numbersnme.com/wp-content/uploads/2025/04/cropped-WhatsApp-Image-2025-04-25-at-18.22.21-168x83.jpeg" class="custom-logo" alt="NumbersNMe" decoding="async">
+                                                </a>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="ast-builder-menu-1 ast-builder-menu ast-flex ast-builder-layout-element site-header-focus-item">
+                                        <div class="ast-main-header-bar-alignment">
+                                            <div class="main-header-bar-navigation">
+                                                <nav class="site-navigation ast-flex-grow-1 navigation-accessibility site-header-focus-item" id="primary-site-navigation-desktop" aria-label="Site Navigation">
+                                                    <div class="main-navigation ast-inline-flex">
+                                                        <ul id="ast-hf-menu-1" class="main-header-menu ast-menu-shadow ast-nav-menu ast-flex submenu-with-border stack-on-mobile">
+                                                            <li class="menu-item"><a href="index.html" class="menu-link">Home</a></li>
+                                                            <li class="menu-item"><a href="about.html" class="menu-link">About Us</a></li>
+                                                            <li class="menu-item"><a href="personal-numerology.html" class="menu-link">Personal Numerology</a></li>
+                                                            <li class="menu-item"><a href="business-numerology.html" class="menu-link">Business Numerology</a></li>
+                                                            <li class="menu-item current-menu-item"><a href="products.html" class="menu-link">Products</a></li>
+                                                            <li class="menu-item"><a href="appointment.html" class="menu-link">Book Appointment</a></li>
+                                                            <li class="menu-item"><a href="contact.html" class="menu-link">Contact Us</a></li>
+                                                        </ul>
+                                                    </div>
+                                                </nav>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="site-header-primary-section-right site-header-section ast-flex ast-grid-right-section">
+                                    <div class="ast-builder-layout-element ast-flex site-header-focus-item ast-header-button-1" data-section="section-hb-button-1">
+                                        <div class="ast-builder-button-wrap ast-builder-button-size-">
+                                            <a class="ast-custom-button-link" href="contact.html">
+                                                <div class="ast-custom-button">Know Your Number</div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Mobile Header -->
+            <div id="ast-mobile-header" class="ast-mobile-header-wrap" data-type="dropdown">
+                <div class="ast-main-header-wrap main-header-bar-wrap">
+                    <div class="ast-primary-header-bar ast-primary-header main-header-bar site-primary-header-wrap site-header-focus-item">
+                        <div class="ast-builder-grid-row ast-builder-grid-row-has-sides ast-builder-grid-row-no-center">
+                            <div class="site-header-primary-section-left site-header-section ast-flex site-header-section-left">
+                                <div class="ast-builder-layout-element ast-flex site-header-focus-item" data-section="title_tagline">
+                                    <div class="site-branding ast-site-identity">
+                                        <span class="site-logo-img">
+                                            <a href="index.html" class="custom-logo-link" rel="home">
+                                                <img width="168" height="83" src="https://numbersnme.com/wp-content/uploads/2025/04/cropped-WhatsApp-Image-2025-04-25-at-18.22.21-168x83.jpeg" class="custom-logo" alt="NumbersNMe" decoding="async">
+                                            </a>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="site-header-primary-section-right site-header-section ast-flex ast-grid-right-section">
+                                <div class="ast-builder-layout-element ast-flex site-header-focus-item" data-section="section-header-mobile-trigger">
+                                    <div class="ast-button-wrap">
+                                        <button type="button" class="menu-toggle main-header-menu-toggle ast-mobile-menu-trigger-minimal" aria-expanded="false">
+                                            <span class="screen-reader-text">Main Menu</span>
+                                            <span class="mobile-menu-toggle-icon">
+                                                <span aria-hidden="true" class="ahfb-svg-iconset ast-inline-flex svg-baseline">
+                                                    <svg class="ast-mobile-svg ast-menu-svg" fill="currentColor" version="1.1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                                        <path d="M3 13h18c0.552 0 1-0.448 1-1s-0.448-1-1-1h-18c-0.552 0-1 0.448-1 1s0.448 1 1 1zM3 7h18c0.552 0 1-0.448 1-1s-0.448-1-1-1h-18c-0.552 0-1 0.448-1 1s0.448 1 1 1zM3 19h18c0.552 0 1-0.448 1-1s-0.448-1-1-1h-18c-0.552 0-1 0.448-1 1s0.448 1 1 1z"></path>
+                                                    </svg>
+                                                </span>
+                                            </span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ast-mobile-header-content content-align-flex-start">
+                    <div class="ast-builder-menu-mobile ast-builder-menu ast-builder-layout-element site-header-focus-item">
+                        <div class="ast-main-header-bar-alignment">
+                            <div class="main-header-bar-navigation">
+                                <nav class="site-navigation ast-flex-grow-1 navigation-accessibility" id="ast-mobile-site-navigation" aria-label="Site Navigation">
+                                    <div id="ast-hf-mobile-menu" class="main-navigation">
+                                        <ul class="main-header-menu ast-nav-menu ast-flex submenu-with-border stack-on-mobile">
+                                            <li class="menu-item"><a href="index.html" class="menu-link">Home</a></li>
+                                            <li class="menu-item"><a href="about.html" class="menu-link">About Us</a></li>
+                                            <li class="menu-item"><a href="personal-numerology.html" class="menu-link">Personal Numerology</a></li>
+                                            <li class="menu-item"><a href="business-numerology.html" class="menu-link">Business Numerology</a></li>
+                                            <li class="menu-item current-menu-item"><a href="products.html" class="menu-link">Products</a></li>
+                                            <li class="menu-item"><a href="appointment.html" class="menu-link">Book Appointment</a></li>
+                                            <li class="menu-item"><a href="contact.html" class="menu-link">Contact Us</a></li>
+                                        </ul>
+                                    </div>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- ============ MAIN CONTENT ============ -->
+        <div id="content" class="site-content">
+            <div class="page-hero">
+                <canvas id="numerology-bg"></canvas>
+                <h1>Products</h1>
+                <p>Explore our numerology products designed to enhance your life and align you with positive energies</p>
+            </div>
+
+            <div class="page-content">
+                <h2>Our Numerology Products</h2>
+                <p>At NumbersNMe, we offer a curated selection of products that complement your numerology journey. Each product is carefully chosen and energized to resonate with positive numerical vibrations.</p>
+
+                <div class="service-grid">
+                    <div class="service-card product-card">
+                        <div class="product-slider">
+                            <div class="product-slides">
+                                <img src="images/Product1.PNG" alt="Crystal Bracelet - Brochure" class="product-slide active">
+                                <img src="images/Product_1_2.PNG" alt="Crystal Bracelet - Gemstones" class="product-slide" style="display:none;">
+                                <img src="images/Product_1_3.PNG" alt="Crystal Bracelet - Details" class="product-slide" style="display:none;">
+                            </div>
+                            <button class="slider-btn slider-prev" onclick="changeSlide(-1)" aria-label="Previous image" style="position:absolute;top:50%;left:6px;transform:translateY(-50%);background:rgba(0,0,0,0.5);color:#fff;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1.1em;display:flex;align-items:center;justify-content:center;">&#10094;</button>
+                            <button class="slider-btn slider-next" onclick="changeSlide(1)" aria-label="Next image" style="position:absolute;top:50%;right:6px;transform:translateY(-50%);background:rgba(0,0,0,0.5);color:#fff;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1.1em;display:flex;align-items:center;justify-content:center;">&#10095;</button>
+                            <div class="slider-dots" style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:6px;">
+                                <span class="dot active" onclick="goToSlide(0)" style="width:8px;height:8px;border-radius:50%;background:#fff;cursor:pointer;opacity:1;"></span>
+                                <span class="dot" onclick="goToSlide(1)" style="width:8px;height:8px;border-radius:50%;background:#fff;cursor:pointer;opacity:0.5;"></span>
+                                <span class="dot" onclick="goToSlide(2)" style="width:8px;height:8px;border-radius:50%;background:#fff;cursor:pointer;opacity:0.5;"></span>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3>Crystal Bracelet as per Birthday</h3>
+                            <p class="product-desc">Personalized crystal healing bracelet custom-made based on your birth date analysis with authentic gemstones.</p>
+                            <p class="product-price">
+                                <span style="font-size:1.1em;">₹1,500</span>
+                                <span style="text-decoration:line-through;color:#999;font-size:0.8em;margin-left:5px;">₹2,500</span>
+                                <span style="background:#e74c3c;color:#fff;font-size:0.65em;padding:2px 6px;border-radius:3px;margin-left:6px;">40% OFF</span>
+                            </p>
+                            <div><a href="contact.html" class="ast-custom-button" style="display:inline-block;font-size:0.85em;padding:8px 20px;">Order Now</a></div>
+                        </div>
+                    </div>
+                    <div class="service-card product-card">
+                        <div class="product-slider" id="product2-slider">
+                            <div class="product-slides">
+                                <img src="images/Product2_1.png" alt="Numerology Study - Overview" class="p2-slide active">
+                                <img src="images/Product2_2.png" alt="Numerology Study - Details" class="p2-slide" style="display:none;">
+                                <img src="images/Product2_3.png" alt="Numerology Study - Services" class="p2-slide" style="display:none;">
+                            </div>
+                            <button class="slider-btn slider-prev" onclick="changeSlide2(-1)" aria-label="Previous" style="position:absolute;top:50%;left:6px;transform:translateY(-50%);background:rgba(0,0,0,0.5);color:#fff;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1.1em;display:flex;align-items:center;justify-content:center;">&#10094;</button>
+                            <button class="slider-btn slider-next" onclick="changeSlide2(1)" aria-label="Next" style="position:absolute;top:50%;right:6px;transform:translateY(-50%);background:rgba(0,0,0,0.5);color:#fff;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1.1em;display:flex;align-items:center;justify-content:center;">&#10095;</button>
+                            <div class="slider-dots" style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:6px;">
+                                <span class="dot2 active" onclick="goToSlide2(0)" style="width:8px;height:8px;border-radius:50%;background:#fff;cursor:pointer;opacity:1;"></span>
+                                <span class="dot2" onclick="goToSlide2(1)" style="width:8px;height:8px;border-radius:50%;background:#fff;cursor:pointer;opacity:0.5;"></span>
+                                <span class="dot2" onclick="goToSlide2(2)" style="width:8px;height:8px;border-radius:50%;background:#fff;cursor:pointer;opacity:0.5;"></span>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3>Personalized Numerology Study &amp; Consultation</h3>
+                            <p class="product-desc">Complete personalized reading covering destiny number, name vibration, future predictions &amp; actionable guidance for your personal &amp; professional life.</p>
+                            <p class="product-price">
+                                <span style="font-size:1.1em;">₹3,000</span>
+                                <span style="text-decoration:line-through;color:#999;font-size:0.8em;margin-left:5px;">₹4,100</span>
+                                <span style="background:#e74c3c;color:#fff;font-size:0.65em;padding:2px 6px;border-radius:3px;margin-left:6px;">27% OFF</span>
+                            </p>
+                            <div><a href="contact.html" class="ast-custom-button" style="display:inline-block;font-size:0.85em;padding:8px 20px;">Order Now</a></div>
+                        </div>
+                    </div>
+                    <div class="service-card product-card">
+                        <div class="product-slider" id="product3-slider">
+                            <div class="product-slides">
+                                <img src="images/Product3_1.png" alt="7 Chakra Healing Workshop - Details" class="p3-slide active">
+                                <img src="images/Product3_2.png" alt="7 Chakra Healing Workshop - Numbers N Me" class="p3-slide" style="display:none;">
+                            </div>
+                            <button class="slider-btn slider-prev" onclick="changeSlide3(-1)" aria-label="Previous" style="position:absolute;top:50%;left:6px;transform:translateY(-50%);background:rgba(0,0,0,0.5);color:#fff;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1.1em;display:flex;align-items:center;justify-content:center;">&#10094;</button>
+                            <button class="slider-btn slider-next" onclick="changeSlide3(1)" aria-label="Next" style="position:absolute;top:50%;right:6px;transform:translateY(-50%);background:rgba(0,0,0,0.5);color:#fff;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1.1em;display:flex;align-items:center;justify-content:center;">&#10095;</button>
+                            <div class="slider-dots" style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:6px;">
+                                <span class="dot3 active" onclick="goToSlide3(0)" style="width:8px;height:8px;border-radius:50%;background:#fff;cursor:pointer;opacity:1;"></span>
+                                <span class="dot3" onclick="goToSlide3(1)" style="width:8px;height:8px;border-radius:50%;background:#fff;cursor:pointer;opacity:0.5;"></span>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3>7 Chakra Healing &amp; Activation Workshop</h3>
+                            <p class="product-desc">Unlock your full potential with our holistic 7-section workshop. Includes expert analysis, vibrational mapping, element balancing, cleansed &amp; charged crystals, and third eye activation techniques.</p>
+                            <p class="product-price">
+                                <span style="font-size:1.1em;">₹1,500</span>
+                                <span style="text-decoration:line-through;color:#999;font-size:0.8em;margin-left:5px;">₹5,000</span>
+                                <span style="background:#e74c3c;color:#fff;font-size:0.65em;padding:2px 6px;border-radius:3px;margin-left:6px;">70% OFF</span>
+                            </p>
+                            <div><a href="contact.html" class="ast-custom-button" style="display:inline-block;font-size:0.85em;padding:8px 20px;">Order Now</a></div>
+                        </div>
+                    </div>
+                    <div class="service-card product-card">
+                        <div class="product-slider" id="product4-slider">
+                            <div class="product-slides">
+                                <img src="images/Product4_1.png" alt="Business Visiting Card - Brochure" class="p4-slide active">
+                                <img src="images/Product4_2.png" alt="Business Visiting Card - Details" class="p4-slide" style="display:none;">
+                            </div>
+                            <button class="slider-btn slider-prev" onclick="changeSlide4(-1)" aria-label="Previous" style="position:absolute;top:50%;left:6px;transform:translateY(-50%);background:rgba(0,0,0,0.5);color:#fff;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1.1em;display:flex;align-items:center;justify-content:center;">&#10094;</button>
+                            <button class="slider-btn slider-next" onclick="changeSlide4(1)" aria-label="Next" style="position:absolute;top:50%;right:6px;transform:translateY(-50%);background:rgba(0,0,0,0.5);color:#fff;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1.1em;display:flex;align-items:center;justify-content:center;">&#10095;</button>
+                            <div class="slider-dots" style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:6px;">
+                                <span class="dot4 active" onclick="goToSlide4(0)" style="width:8px;height:8px;border-radius:50%;background:#fff;cursor:pointer;opacity:1;"></span>
+                                <span class="dot4" onclick="goToSlide4(1)" style="width:8px;height:8px;border-radius:50%;background:#fff;cursor:pointer;opacity:0.5;"></span>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3>10x Business Growth Holistic Visiting Card</h3>
+                            <p class="product-desc">Unlock 10x business growth with a personalized visiting card combining Vastu, graphology, numerology, colour science &amp; 5-element balance aligned to your birth date &amp; business goals.</p>
+                            <p class="product-price">
+                                <span style="font-size:1.1em;">₹4,100</span>
+                                <span style="text-decoration:line-through;color:#999;font-size:0.8em;margin-left:5px;">₹5,000</span>
+                                <span style="background:#e74c3c;color:#fff;font-size:0.65em;padding:2px 6px;border-radius:3px;margin-left:6px;">18% OFF</span>
+                            </p>
+                            <div><a href="contact.html" class="ast-custom-button" style="display:inline-block;font-size:0.85em;padding:8px 20px;">Order Now</a></div>
+                        </div>
+                    </div>
+                    <div class="service-card product-card">
+                        <div class="product-slider" id="product5-slider">
+                            <div class="product-slides">
+                                <img src="images/Product5_1.png" alt="Business Logo Numerology - Overview" class="p5-slide active">
+                                <img src="images/Product5_2.png" alt="Business Logo Numerology - Details" class="p5-slide" style="display:none;">
+                                <img src="images/Product5_3.png" alt="Business Logo Numerology - Process" class="p5-slide" style="display:none;">
+                            </div>
+                            <button class="slider-btn slider-prev" onclick="changeSlide5(-1)" aria-label="Previous" style="position:absolute;top:50%;left:6px;transform:translateY(-50%);background:rgba(0,0,0,0.5);color:#fff;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1.1em;display:flex;align-items:center;justify-content:center;">&#10094;</button>
+                            <button class="slider-btn slider-next" onclick="changeSlide5(1)" aria-label="Next" style="position:absolute;top:50%;right:6px;transform:translateY(-50%);background:rgba(0,0,0,0.5);color:#fff;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1.1em;display:flex;align-items:center;justify-content:center;">&#10095;</button>
+                            <div class="slider-dots" style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:6px;">
+                                <span class="dot5 active" onclick="goToSlide5(0)" style="width:8px;height:8px;border-radius:50%;background:#fff;cursor:pointer;opacity:1;"></span>
+                                <span class="dot5" onclick="goToSlide5(1)" style="width:8px;height:8px;border-radius:50%;background:#fff;cursor:pointer;opacity:0.5;"></span>
+                                <span class="dot5" onclick="goToSlide5(2)" style="width:8px;height:8px;border-radius:50%;background:#fff;cursor:pointer;opacity:0.5;"></span>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3>Business Logo N Numerology</h3>
+                            <p class="product-desc">Unlock 10x business growth with a personalized holistic logo. Our 4-pillar alignment process combines Vastu Shastra, expert graphology, strategic numerology from birth date analysis &amp; advanced colour science.</p>
+                            <p class="product-price">
+                                <span style="font-size:1.1em;">₹20,000</span>
+                                <span style="text-decoration:line-through;color:#999;font-size:0.8em;margin-left:5px;">₹40,000</span>
+                                <span style="background:#e74c3c;color:#fff;font-size:0.65em;padding:2px 6px;border-radius:3px;margin-left:6px;">50% OFF</span>
+                            </p>
+                            <div><a href="contact.html" class="ast-custom-button" style="display:inline-block;font-size:0.85em;padding:8px 20px;">Order Now</a></div>
+                        </div>
+                    </div>
+                    <div class="service-card product-card">
+                        <div class="product-slider" id="product6-slider">
+                            <div class="product-slides">
+                                <img src="images/Product6_1.png" alt="5-Year Numerology Report - Overview" class="p6-slide active">
+                                <img src="images/Product6_2.png" alt="5-Year Numerology Report - Details" class="p6-slide" style="display:none;">
+                                <img src="images/Product6_3.png" alt="5-Year Numerology Report - Analysis" class="p6-slide" style="display:none;">
+                            </div>
+                            <button class="slider-btn slider-prev" onclick="changeSlide6(-1)" aria-label="Previous" style="position:absolute;top:50%;left:6px;transform:translateY(-50%);background:rgba(0,0,0,0.5);color:#fff;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1.1em;display:flex;align-items:center;justify-content:center;">&#10094;</button>
+                            <button class="slider-btn slider-next" onclick="changeSlide6(1)" aria-label="Next" style="position:absolute;top:50%;right:6px;transform:translateY(-50%);background:rgba(0,0,0,0.5);color:#fff;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1.1em;display:flex;align-items:center;justify-content:center;">&#10095;</button>
+                            <div class="slider-dots" style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:6px;">
+                                <span class="dot6 active" onclick="goToSlide6(0)" style="width:8px;height:8px;border-radius:50%;background:#fff;cursor:pointer;opacity:1;"></span>
+                                <span class="dot6" onclick="goToSlide6(1)" style="width:8px;height:8px;border-radius:50%;background:#fff;cursor:pointer;opacity:0.5;"></span>
+                                <span class="dot6" onclick="goToSlide6(2)" style="width:8px;height:8px;border-radius:50%;background:#fff;cursor:pointer;opacity:0.5;"></span>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3>Comprehensive 5-Year Numerology Report</h3>
+                            <p class="product-desc">A detailed 30–45 page report covering Personal Year, Loshu Grid, Lucky &amp; Unlucky Numbers, Mahadasha, Name Analysis, Vaastu Dosh, Marriage, Finance &amp; Health Analysis including Ayurveda insights.</p>
+                            <p class="product-price">
+                                <span style="font-size:1.1em;">₹500</span>
+                                <span style="text-decoration:line-through;color:#999;font-size:0.8em;margin-left:5px;">₹2,500</span>
+                                <span style="background:#e74c3c;color:#fff;font-size:0.65em;padding:2px 6px;border-radius:3px;margin-left:6px;">80% OFF</span>
+                            </p>
+                            <div><a href="contact.html" class="ast-custom-button" style="display:inline-block;font-size:0.85em;padding:8px 20px;">Order Now</a></div>
+                        </div>
+                    </div>
+                </div>
+
+                <h2>How to Order</h2>
+                <p>Ordering your numerology product is simple:</p>
+                <ol style="line-height:2;">
+                    <li>Browse our products above and choose what suits your needs.</li>
+                    <li>Click the <strong>Order Now</strong> button on the product you'd like to order.</li>
+                    <li>Provide your details (name, date of birth, and any specific questions).</li>
+                    <li>Receive your report or consultation within the specified timeframe.</li>
+                </ol>
+
+                <p style="margin-top:30px;">
+                    <a href="contact.html" class="ast-custom-button" style="display:inline-block;">Contact Us to Order</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- ============ FOOTER ============ -->
+        <footer class="site-footer" id="colophon">
+            <div class="ekit-template-content-markup ekit-template-content-footer">
+                <div class="elementor elementor-17" style="background:#1e293b;color:#fff;padding:50px 20px 20px;">
+                    <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:40px;">
+                        <div>
+                            <a href="index.html">
+                                <img width="168" height="83" src="https://numbersnme.com/wp-content/uploads/2025/04/WhatsApp_Image_2025-04-25_at_18.22.21-removebg-preview.png" alt="NumbersNMe" style="max-width:168px;">
+                            </a>
+                            <div style="margin-top:20px;">
+                                <a href="#" aria-label="Facebook" style="color:#fff;margin-right:15px;font-size:1.2rem;">Facebook</a>
+                                <a href="#" aria-label="Instagram" style="color:#fff;font-size:1.2rem;">Instagram</a>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 style="color:#fff;margin-bottom:15px;">Quick Link</h3>
+                            <ul style="list-style:none;padding:0;">
+                                <li style="margin-bottom:8px;"><a href="index.html" style="color:#ccc;">Home</a></li>
+                                <li style="margin-bottom:8px;"><a href="about.html" style="color:#ccc;">About Us</a></li>
+                                <li style="margin-bottom:8px;"><a href="personal-numerology.html" style="color:#ccc;">Personal Numerology</a></li>
+                                <li style="margin-bottom:8px;"><a href="business-numerology.html" style="color:#ccc;">Business Numerology</a></li>
+                                <li style="margin-bottom:8px;"><a href="products.html" style="color:#ccc;">Products</a></li>
+                                <li style="margin-bottom:8px;"><a href="appointment.html" style="color:#ccc;">Book Appointment</a></li>
+                                <li style="margin-bottom:8px;"><a href="contact.html" style="color:#ccc;">Contact Us</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 style="color:#fff;margin-bottom:15px;">Contact</h3>
+                            <p style="color:#ccc;margin-bottom:10px;">📞 +91 8425985792</p>
+                            <p style="color:#ccc;margin-bottom:10px;">✉️ sangitha@numbersnme.com</p>
+                            <p style="color:#ccc;">📍 2303, Crosswinds apartments, jungle mangal Road, drakshabag, Bhandup West Mumbai - 400078</p>
+                        </div>
+                    </div>
+                    <div style="text-align:center;margin-top:40px;padding-top:20px;border-top:1px solid #334155;">
+                        <p style="color:#94a3b8;">Copyright <span>numbersnme.com</span> &copy; 2025 All Rights Reserved</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <div id="ast-scroll-top" tabindex="0" class="ast-scroll-top-icon ast-scroll-to-top-right" data-on-devices="both">
+        <span class="ast-icon icon-arrow">
+            <svg class="ast-arrow-svg" xmlns="http://www.w3.org/2000/svg" width="26px" height="16.043px" viewBox="57 35.171 26 16.043">
+                <path d="M57.5,38.193l12.5,12.5l12.5-12.5l-2.5-2.5l-10,10l-10-10L57.5,38.193z"/>
+            </svg>
+        </span>
+        <span class="screen-reader-text">Scroll to Top</span>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Product 1 Slider
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.product-slide');
+        const dots = document.querySelectorAll('.slider-dots .dot');
+
+        function showSlide(index) {
+            slides.forEach(s => s.style.display = 'none');
+            dots.forEach(d => d.style.opacity = '0.5');
+            slides[index].style.display = 'block';
+            dots[index].style.opacity = '1';
+            currentSlide = index;
+        }
+
+        function changeSlide(direction) {
+            let next = (currentSlide + direction + slides.length) % slides.length;
+            showSlide(next);
+        }
+
+        function goToSlide(index) {
+            showSlide(index);
+        }
+
+        // Product 2 Slider
+        let currentSlide2 = 0;
+        const slides2 = document.querySelectorAll('.p2-slide');
+        const dots2 = document.querySelectorAll('.dot2');
+
+        function showSlide2(index) {
+            slides2.forEach(s => s.style.display = 'none');
+            dots2.forEach(d => d.style.opacity = '0.5');
+            slides2[index].style.display = 'block';
+            dots2[index].style.opacity = '1';
+            currentSlide2 = index;
+        }
+
+        function changeSlide2(direction) {
+            let next = (currentSlide2 + direction + slides2.length) % slides2.length;
+            showSlide2(next);
+        }
+
+        function goToSlide2(index) {
+            showSlide2(index);
+        }
+
+        // Product 3 Slider
+        let currentSlide3 = 0;
+        const slides3 = document.querySelectorAll('.p3-slide');
+        const dots3 = document.querySelectorAll('.dot3');
+
+        function showSlide3(index) {
+            slides3.forEach(s => s.style.display = 'none');
+            dots3.forEach(d => d.style.opacity = '0.5');
+            slides3[index].style.display = 'block';
+            dots3[index].style.opacity = '1';
+            currentSlide3 = index;
+        }
+
+        function changeSlide3(direction) {
+            let next = (currentSlide3 + direction + slides3.length) % slides3.length;
+            showSlide3(next);
+        }
+
+        function goToSlide3(index) {
+            showSlide3(index);
+        }
+
+        // Product 4 Slider
+        let currentSlide4 = 0;
+        const slides4 = document.querySelectorAll('.p4-slide');
+        const dots4 = document.querySelectorAll('.dot4');
+
+        function showSlide4(index) {
+            slides4.forEach(s => s.style.display = 'none');
+            dots4.forEach(d => d.style.opacity = '0.5');
+            slides4[index].style.display = 'block';
+            dots4[index].style.opacity = '1';
+            currentSlide4 = index;
+        }
+
+        function changeSlide4(direction) {
+            let next = (currentSlide4 + direction + slides4.length) % slides4.length;
+            showSlide4(next);
+        }
+
+        function goToSlide4(index) {
+            showSlide4(index);
+        }
+
+        // Product 5 Slider
+        let currentSlide5 = 0;
+        const slides5 = document.querySelectorAll('.p5-slide');
+        const dots5 = document.querySelectorAll('.dot5');
+
+        function showSlide5(index) {
+            slides5.forEach(s => s.style.display = 'none');
+            dots5.forEach(d => d.style.opacity = '0.5');
+            slides5[index].style.display = 'block';
+            dots5[index].style.opacity = '1';
+            currentSlide5 = index;
+        }
+
+        function changeSlide5(direction) {
+            let next = (currentSlide5 + direction + slides5.length) % slides5.length;
+            showSlide5(next);
+        }
+
+        function goToSlide5(index) {
+            showSlide5(index);
+        }
+
+        // Product 6 Slider
+        let currentSlide6 = 0;
+        const slides6 = document.querySelectorAll('.p6-slide');
+        const dots6 = document.querySelectorAll('.dot6');
+
+        function showSlide6(index) {
+            slides6.forEach(s => s.style.display = 'none');
+            dots6.forEach(d => d.style.opacity = '0.5');
+            slides6[index].style.display = 'block';
+            dots6[index].style.opacity = '1';
+            currentSlide6 = index;
+        }
+
+        function changeSlide6(direction) {
+            let next = (currentSlide6 + direction + slides6.length) % slides6.length;
+            showSlide6(next);
+        }
+
+        function goToSlide6(index) {
+            showSlide6(index);
+        }
+    </script>
+
+    <!-- Numerology Background Animation -->
+    <script>
+    (function() {
+        const canvas = document.getElementById('numerology-bg');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let W, H, particles = [];
+
+        const symbols = ['1','2','3','4','5','6','7','8','9','0','∞','☿','♀','⊕','♂','♃','♄','☽','☉','✦','◈','⟐'];
+
+        function resize() {
+            const hero = canvas.parentElement;
+            W = canvas.width = hero.offsetWidth;
+            H = canvas.height = hero.offsetHeight;
+        }
+
+        function createParticle() {
+            return {
+                x: Math.random() * W,
+                y: Math.random() * H,
+                size: Math.random() * 18 + 10,
+                speed: Math.random() * 0.4 + 0.1,
+                opacity: Math.random() * 0.3 + 0.05,
+                opacityDir: (Math.random() - 0.5) * 0.005,
+                char: symbols[Math.floor(Math.random() * symbols.length)],
+                drift: (Math.random() - 0.5) * 0.3,
+                glow: Math.random() > 0.7
+            };
+        }
+
+        function init() {
+            resize();
+            particles = [];
+            const count = Math.floor((W * H) / 8000);
+            for (let i = 0; i < count; i++) particles.push(createParticle());
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, W, H);
+
+            // Subtle radial gradient overlay
+            const grad = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, W * 0.7);
+            grad.addColorStop(0, 'rgba(212,175,55,0.03)');
+            grad.addColorStop(1, 'transparent');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, W, H);
+
+            particles.forEach(p => {
+                p.y -= p.speed;
+                p.x += p.drift;
+                p.opacity += p.opacityDir;
+
+                if (p.opacity > 0.35) p.opacityDir = -Math.abs(p.opacityDir);
+                if (p.opacity < 0.03) p.opacityDir = Math.abs(p.opacityDir);
+
+                if (p.y < -30) { p.y = H + 20; p.x = Math.random() * W; }
+                if (p.x < -20 || p.x > W + 20) p.x = Math.random() * W;
+
+                ctx.save();
+                if (p.glow) {
+                    ctx.shadowColor = 'rgba(212,175,55,0.4)';
+                    ctx.shadowBlur = 12;
+                }
+                ctx.font = p.size + 'px Poppins, serif';
+                ctx.fillStyle = `rgba(212,175,55,${p.opacity})`;
+                ctx.fillText(p.char, p.x, p.y);
+                ctx.restore();
+            });
+
+            requestAnimationFrame(draw);
+        }
+
+        window.addEventListener('resize', init);
+        init();
+        draw();
+    })();
+    </script>
+</body>
+</html>
+
