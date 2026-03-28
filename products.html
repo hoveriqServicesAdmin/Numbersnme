@@ -9,10 +9,16 @@
     <style>
         /* Dark numerology theme override */
         .page-hero {
-            background: #0a0a0a;
+            background: #1E3838;
             position: relative;
             overflow: hidden;
-            padding: 80px 20px;
+            padding: 75px 20px;
+            margin-top: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
         }
         .page-hero canvas {
             position: absolute;
@@ -36,18 +42,18 @@
         }
 
         .page-content {
-            background: #111;
+            background: transparent;
             padding-bottom: 60px;
         }
         .page-content h2 {
-            color: #d4af37;
+            color: #1E3838;
         }
         .page-content > p {
-            color: rgba(255,255,255,0.7);
+            color: #334155;
         }
 
         .service-card {
-            background: #1a1a2e !important;
+            background: #174C4F !important;
             border: 1px solid rgba(212,175,55,0.15);
         }
         .service-card:hover {
@@ -60,15 +66,15 @@
             color: rgba(255,255,255,0.6);
         }
         .product-card .product-slider {
-            background: #111 !important;
+            background: transparent !important;
         }
 
         /* How to Order section */
         .page-content ol {
-            color: rgba(255,255,255,0.7);
+            color: #334155;
         }
         .page-content ol strong {
-            color: rgba(255,255,255,0.9);
+            color: #1E3838;
         }
 
         /* CTA buttons on dark background */
@@ -87,7 +93,7 @@
 
         /* Footer blending */
         #content {
-            background: #111;
+            background: transparent;
         }
 
         .slider-btn:hover { background: rgba(212,175,55,0.8) !important; }
@@ -157,6 +163,7 @@
                                                             <li class="menu-item current-menu-item"><a href="products.html" class="menu-link">Products</a></li>
                                                             <li class="menu-item"><a href="appointment.html" class="menu-link">Book Appointment</a></li>
                                                             <li class="menu-item"><a href="contact.html" class="menu-link">Contact Us</a></li>
+                                                            <li class="menu-item menu-item-has-button"><a class="ast-custom-button-link" href="contact.html"><div class="ast-custom-button">Know Your Number</div></a></li>
                                                         </ul>
                                                     </div>
                                                 </nav>
@@ -165,13 +172,6 @@
                                     </div>
                                 </div>
                                 <div class="site-header-primary-section-right site-header-section ast-flex ast-grid-right-section">
-                                    <div class="ast-builder-layout-element ast-flex site-header-focus-item ast-header-button-1" data-section="section-hb-button-1">
-                                        <div class="ast-builder-button-wrap ast-builder-button-size-">
-                                            <a class="ast-custom-button-link" href="contact.html">
-                                                <div class="ast-custom-button">Know Your Number</div>
-                                            </a>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -239,7 +239,7 @@
 
         <!-- ============ MAIN CONTENT ============ -->
         <div id="content" class="site-content">
-            <div class="page-hero">
+            <div class="page-hero animated-hero">
                 <canvas id="numerology-bg"></canvas>
                 <h1>Products</h1>
                 <p>Explore our numerology products designed to enhance your life and align you with positive energies</p>
@@ -418,6 +418,15 @@
                 </p>
             </div>
         </div>
+
+        <!-- CTA Section -->
+        <section class="pn-cta">
+            <div class="pn-cta-inner">
+                <h2>Ready to Discover Your Numbers?</h2>
+                <p>Book a personal numerology consultation with Sangita Sawant and start your journey towards clarity, balance, and success.</p>
+                <a href="contact.html" class="cta-btn">Book Your Reading</a>
+            </div>
+        </section>
 
         <!-- ============ FOOTER ============ -->
         <footer class="site-footer" id="colophon">

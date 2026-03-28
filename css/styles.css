@@ -41,8 +41,8 @@
     --ast-global-color-1: #045cb4;
     --ast-global-color-2: #1e293b;
     --ast-global-color-3: #334155;
-    --ast-global-color-4: #FFFFFF;
-    --ast-global-color-5: #F0F5FA;
+    --ast-global-color-4: #FFF9E5; /* Light cream background */
+    --ast-global-color-5: #FAF3DF; /* Slightly deeper cream for containers */
     --ast-global-color-6: #111111;
     --ast-global-color-7: #D1D5DB;
     --ast-global-color-8: #111111;
@@ -350,7 +350,7 @@ header .custom-logo-link img {
 
 .site-header-primary-section-left {
     min-width: 0;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .site-header-section {
@@ -440,6 +440,34 @@ header .custom-logo-link img {
 .ast-builder-button-wrap {
     display: flex;
     align-items: center;
+}
+
+/* Know Your Number button inside nav menu */
+.menu-item-has-button {
+    display: flex !important;
+    align-items: center;
+    margin-left: 10px;
+}
+.menu-item-has-button .ast-custom-button-link {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+.menu-item-has-button .ast-custom-button {
+    background: #006B4F !important;
+    color: #ecc90a !important;
+    font-size: 13px !important;
+    border-radius: 10px;
+    padding: 8px 18px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    transition: background 0.2s, color 0.2s;
+    white-space: nowrap;
+}
+.menu-item-has-button .ast-custom-button:hover {
+    background: #248000 !important;
+    color: #fffbe0 !important;
 }
 
 .ast-custom-button-link {
@@ -602,7 +630,7 @@ body {
    =========================================== */
 .ast-header-button-1 .ast-custom-button {
     color: #ecc90a;
-    background: #248000;
+    background: #006B4F;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
@@ -1227,7 +1255,7 @@ input[type="number"]:focus, textarea:focus,
     color: var(--ast-global-color-1);
 }
 
-.ast-builder-menu-mobile .main-navigation .menu-item.current-menu-item > .menu-link,
+.ast-builder-menu-mobile .main-navigation .main-header-menu .menu-item.current-menu-item > .menu-link,
 .ast-builder-menu-mobile .main-navigation .inline-on-mobile .menu-item.current-menu-item > .ast-menu-toggle,
 .ast-builder-menu-mobile .main-navigation .menu-item.current-menu-ancestor > .menu-link,
 .ast-builder-menu-mobile .main-navigation .menu-item.current-menu-ancestor > .ast-menu-toggle {
@@ -1899,7 +1927,7 @@ body .is-layout-grid { display: grid; }
 .page-hero {
     background: linear-gradient(135deg, var(--ast-global-color-0) 0%, var(--ast-global-color-1) 100%);
     color: #ffffff;
-    padding: 60px 20px;
+    padding: 75px 20px;
     text-align: center;
 }
 
@@ -1961,38 +1989,42 @@ body .is-layout-grid { display: grid; }
    Business Numerology Page Styles
    =========================================== */
 
-/* Hero background image from live site */
+/* Hero background - dark green animated panel */
 .biz-page-hero {
-    background: none;
-    background-color: #000000;
-    background-image: url("https://numbersnme.com/wp-content/uploads/2025/04/types-of-numerology.jpg");
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
+    background: #1E3838;
     position: relative;
-    min-height: 170px;
+    overflow: hidden;
+    min-height: unset;
+    padding: 75px 20px;
+    margin-top: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    text-align: center;
+}
+
+.biz-page-hero canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
 }
 
 .biz-page-hero::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 0;
+    display: none;
 }
 
 .biz-page-hero h1,
 .biz-page-hero h2,
 .biz-page-hero p {
     position: relative;
-    z-index: 1;
+    z-index: 2;
+}
+
+.biz-page-hero h1 {
+    color: #d4af37;
+    text-shadow: 0 0 20px rgba(212,175,55,0.4);
 }
 
 /* Intro Section: Info List + Image Grid */
@@ -2298,37 +2330,37 @@ body .is-layout-grid { display: grid; }
     }
 }
 
-/* About Us Hero background image */
+/* About Us Hero - dark green animated panel */
 .about-page-hero {
-    background: none;
-    background-color: #000000;
-    background-image: url("https://numbersnme.com/wp-content/uploads/2025/04/images.jpeg");
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
+    background: #1E3838;
     position: relative;
-    min-height: 102px;
-    padding: 36px 20px;
+    overflow: hidden;
+    min-height: unset;
+    padding: 75px 20px;
+    margin-top: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    text-align: center;
+}
+
+.about-page-hero canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
 }
 
 .about-page-hero::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 0;
+    display: none;
 }
 
 .about-page-hero h1 {
     position: relative;
-    z-index: 1;
+    z-index: 2;
+    color: #d4af37;
+    text-shadow: 0 0 20px rgba(212,175,55,0.4);
 }
 
 /* About Us Two-Column Layout */
@@ -2358,16 +2390,6 @@ body .is-layout-grid { display: grid; }
     margin-bottom: 1em;
     line-height: 1.8;
     color: var(--ast-global-color-3);
-}
-
-@media (max-width: 768px) {
-    .about-two-col {
-        flex-direction: column;
-    }
-    .about-col-left {
-        flex: 0 0 100%;
-        max-width: 100%;
-    }
 }
 
 .contact-form-section {
@@ -2538,6 +2560,7 @@ body .is-layout-grid { display: grid; }
         width: 100%;
     }
 
+
     html {
         font-size: 91.2%;
     }
@@ -2644,146 +2667,6 @@ body .is-layout-grid { display: grid; }
     .ast-builder-menu-mobile .main-navigation .main-header-menu .menu-link,
     .ast-builder-menu-mobile .main-navigation .main-header-menu .sub-menu {
         background-color: var(--ast-global-color-4);
-    }
-
-    .ast-builder-grid-row-container.ast-builder-grid-row-tablet-3-firstrow .ast-builder-grid-row > *:first-child,
-    .ast-builder-grid-row-container.ast-builder-grid-row-tablet-3-lastrow .ast-builder-grid-row > *:last-child {
-        grid-column: 1 / -1;
-    }
-
-    body.archive .ast-archive-description {
-        text-align: left;
-    }
-
-    .ast-header-break-point .ast-builder-menu-mobile .main-navigation {
-        display: block;
-    }
-}
-
-@media (min-width: 921px) {
-    .ast-left-sidebar.ast-page-builder-template #secondary,
-    .archive.ast-right-sidebar.ast-page-builder-template .site-main {
-        padding-left: 20px;
-        padding-right: 20px;
-    }
-
-    .ast-separate-container.ast-right-sidebar #primary,
-    .ast-separate-container.ast-left-sidebar #primary {
-        border: 0;
-    }
-
-    .search-no-results.ast-separate-container #primary {
-        margin-bottom: 4em;
-    }
-}
-
-@media (min-width: 769px) {
-    #ast-scroll-top {
-        content: "769";
-    }
-}
-
-/* ===========================================
-   29. Responsive - Mobile Small
-   =========================================== */
-@media (min-width: 544px) {
-    .ast-container {
-        max-width: 100%;
-    }
-}
-
-@media (max-width: 544px) {
-    .ast-separate-container .ast-article-post,
-    .ast-separate-container .ast-article-single,
-    .ast-separate-container .comments-title,
-    .ast-separate-container .ast-archive-description {
-        padding: 1.5em 1em;
-    }
-
-    .ast-separate-container #content .ast-container {
-        padding-left: 0.54em;
-        padding-right: 0.54em;
-    }
-
-    .ast-separate-container .ast-comment-list .bypostauthor {
-        padding: .5em;
-    }
-
-    .ast-search-menu-icon.ast-dropdown-active .search-field {
-        width: 170px;
-    }
-
-    html {
-        font-size: 91.2%;
-    }
-
-    .site-title {
-        display: block;
-    }
-
-    .site-header .site-description {
-        display: none;
-    }
-
-    h1, .entry-content h1 {
-        font-size: 30px;
-        font-size: 1.875rem;
-    }
-
-    h2, .entry-content h2 {
-        font-size: 25px;
-        font-size: 1.5625rem;
-    }
-
-    h3, .entry-content h3 {
-        font-size: 20px;
-        font-size: 1.25rem;
-    }
-
-    .ast-comment-formwrap.ast-row {
-        column-gap: 10px;
-        display: inline-block;
-    }
-
-    #ast-commentform .ast-grid-common-col {
-        position: relative;
-        width: 100%;
-    }
-
-    .ast-separate-container .ast-comment-list li.depth-1 {
-        margin-bottom: 0;
-    }
-
-    .ast-separate-container .ast-comment-list .bypostauthor {
-        padding: .5em;
-    }
-
-    .ast-separate-container .ast-comment-list .bypostauthor li {
-        padding: 0 0 0 .5em;
-    }
-
-    .ast-comment-list .children {
-        margin-left: 0.66666em;
-    }
-
-    .wp-block-columns .wp-block-column:not(:last-child) {
-        margin-bottom: 20px;
-    }
-
-    .wp-block-latest-posts {
-        margin: 0;
-    }
-
-    .ast-header-break-point .ast-primary-header-bar {
-        display: grid;
-    }
-
-    .ast-header-break-point .ast-builder-menu-1 {
-        display: flex;
-    }
-
-    .ast-builder-menu-mobile .main-navigation .menu-item.menu-item-has-children > .ast-menu-toggle {
-        top: 0;
     }
 
     .ast-builder-grid-row-container.ast-builder-grid-row-mobile-3-firstrow .ast-builder-grid-row > *:first-child,
@@ -2957,7 +2840,7 @@ body .is-layout-grid { display: grid; }
 /* Page content responsive */
 @media (max-width: 768px) {
     .page-hero {
-        padding: 40px 15px;
+        padding: 55px 15px;
     }
 
     .page-hero h1 {
@@ -2977,3 +2860,120 @@ body .is-layout-grid { display: grid; }
     }
 }
 
+/* Custom styles for menu background colors */
+.menu-link[href="products.html"],
+.menu-link[href="appointment.html"],
+.menu-link[href="contact.html"] {
+    background-color: transparent;
+    color: var(--ast-global-color-2);
+}
+
+.ast-custom-button {
+    background: #006B4F !important; /* Green background */
+    color: #ecc90a !important;    /* Yellow font */
+    font-size: 13px !important;   /* Small font */
+    border-radius: 10px;
+    padding: 8px 18px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    transition: background 0.2s, color 0.2s;
+}
+
+.ast-custom-button:hover {
+    background: #248000 !important;
+    color: #fffbe0 !important;
+}
+
+/* ===========================================
+   Unified Animated Hero Panel
+   =========================================== */
+.animated-hero {
+    background: #1E3838;
+    color: #fff;
+    text-align: center;
+    padding: 75px 20px;
+    position: relative;
+    overflow: hidden;
+    margin-top: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+.animated-hero canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+}
+.animated-hero h1,
+.animated-hero h2,
+.animated-hero p {
+    position: relative;
+    z-index: 2;
+}
+.animated-hero h1 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.4em;
+    font-weight: 700;
+    color: #d4af37;
+    text-shadow: 0 0 20px rgba(212,175,55,0.4);
+    margin: 0 0 10px;
+}
+.animated-hero p {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1em;
+    color: rgba(255,255,255,0.8);
+    max-width: 600px;
+    margin: 0 auto;
+}
+.animated-hero h2 {
+    font-family: 'Poppins', sans-serif;
+    color: rgba(255,255,255,0.95);
+    font-size: 1.4rem;
+    font-weight: 500;
+    margin-top: 10px;
+}
+
+/* ===========================================
+   CTA "Ready to Discover" Green Panel
+   =========================================== */
+.pn-cta {
+    background: #048C2A;
+    padding: 40px 20px;
+    text-align: center;
+}
+.pn-cta-inner {
+    max-width: 800px;
+    margin: 0 auto;
+}
+.pn-cta h2 {
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    margin: 0 0 15px;
+}
+.pn-cta p {
+    color: rgba(255,255,255,0.9);
+    font-family: 'Poppins', sans-serif;
+    margin: 0 0 25px;
+    line-height: 1.7;
+}
+.pn-cta .cta-btn {
+    display: inline-block;
+    background: #55017C;
+    color: #ECC90A;
+    padding: 14px 36px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+.pn-cta .cta-btn:hover {
+    color: #fff;
+    background: #6a029e;
+}

@@ -42,6 +42,7 @@
                                                             <li class="menu-item"><a href="products.html" class="menu-link">Products</a></li>
                                                             <li class="menu-item"><a href="appointment.html" class="menu-link">Book Appointment</a></li>
                                                             <li class="menu-item"><a href="contact.html" class="menu-link">Contact Us</a></li>
+                                                            <li class="menu-item menu-item-has-button"><a class="ast-custom-button-link" href="contact.html"><div class="ast-custom-button">Know Your Number</div></a></li>
                                                         </ul>
                                                     </div>
                                                 </nav>
@@ -50,13 +51,6 @@
                                     </div>
                                 </div>
                                 <div class="site-header-primary-section-right site-header-section ast-flex ast-grid-right-section">
-                                    <div class="ast-builder-layout-element ast-flex site-header-focus-item ast-header-button-1" data-section="section-hb-button-1">
-                                        <div class="ast-builder-button-wrap ast-builder-button-size-">
-                                            <a class="ast-custom-button-link" href="contact.html">
-                                                <div class="ast-custom-button">Know Your Number</div>
-                                            </a>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -126,7 +120,8 @@
         <!-- ============ MAIN CONTENT ============ -->
         <div id="content" class="site-content">
             <!-- Hero Section -->
-            <div class="page-hero about-page-hero">
+            <div class="page-hero about-page-hero animated-hero">
+                <canvas id="numerology-bg"></canvas>
                 <h1>About Us</h1>
             </div>
 
@@ -148,6 +143,15 @@
                 </div>
             </div>
         </div>
+
+        <!-- CTA Section -->
+        <section class="pn-cta">
+            <div class="pn-cta-inner">
+                <h2>Ready to Discover Your Numbers?</h2>
+                <p>Book a personal numerology consultation with Sangita Sawant and start your journey towards clarity, balance, and success.</p>
+                <a href="contact.html" class="cta-btn">Book Your Reading</a>
+            </div>
+        </section>
 
         <!-- ============ FOOTER ============ -->
         <footer class="site-footer" id="colophon">
@@ -201,6 +205,83 @@
     </div>
 
     <script src="js/main.js"></script>
+
+    <!-- Numerology Background Animation -->
+    <script>
+    (function() {
+        const canvas = document.getElementById('numerology-bg');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let W, H, particles = [];
+
+        const symbols = ['1','2','3','4','5','6','7','8','9','0','∞','☿','♀','⊕','♂','♃','♄','☽','☉','✦','◈','⟐'];
+
+        function resize() {
+            const hero = canvas.parentElement;
+            W = canvas.width = hero.offsetWidth;
+            H = canvas.height = hero.offsetHeight;
+        }
+
+        function createParticle() {
+            return {
+                x: Math.random() * W,
+                y: Math.random() * H,
+                size: Math.random() * 18 + 10,
+                speed: Math.random() * 0.4 + 0.1,
+                opacity: Math.random() * 0.3 + 0.05,
+                opacityDir: (Math.random() - 0.5) * 0.005,
+                char: symbols[Math.floor(Math.random() * symbols.length)],
+                drift: (Math.random() - 0.5) * 0.3,
+                glow: Math.random() > 0.7
+            };
+        }
+
+        function init() {
+            resize();
+            particles = [];
+            const count = Math.floor((W * H) / 8000);
+            for (let i = 0; i < count; i++) particles.push(createParticle());
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, W, H);
+
+            const grad = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, W * 0.7);
+            grad.addColorStop(0, 'rgba(212,175,55,0.03)');
+            grad.addColorStop(1, 'transparent');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, W, H);
+
+            particles.forEach(p => {
+                p.y -= p.speed;
+                p.x += p.drift;
+                p.opacity += p.opacityDir;
+
+                if (p.opacity > 0.35) p.opacityDir = -Math.abs(p.opacityDir);
+                if (p.opacity < 0.03) p.opacityDir = Math.abs(p.opacityDir);
+
+                if (p.y < -30) { p.y = H + 20; p.x = Math.random() * W; }
+                if (p.x < -20 || p.x > W + 20) p.x = Math.random() * W;
+
+                ctx.save();
+                if (p.glow) {
+                    ctx.shadowColor = 'rgba(212,175,55,0.4)';
+                    ctx.shadowBlur = 12;
+                }
+                ctx.font = p.size + 'px Poppins, serif';
+                ctx.fillStyle = `rgba(212,175,55,${p.opacity})`;
+                ctx.fillText(p.char, p.x, p.y);
+                ctx.restore();
+            });
+
+            requestAnimationFrame(draw);
+        }
+
+        window.addEventListener('resize', init);
+        init();
+        draw();
+    })();
+    </script>
 </body>
 </html>
 

@@ -9,12 +9,17 @@
     <style>
         /* ── Dark Numerology Theme ── */
         .contact-hero {
-            background: #0a0a0a;
+            background: #1E3838;
             color: #fff;
             text-align: center;
-            padding: 80px 20px 70px;
+            padding: 75px 20px;
             position: relative;
             overflow: hidden;
+            margin-top: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
         .contact-hero canvas {
             position: absolute;
@@ -42,12 +47,12 @@
         }
 
         #content {
-            background: #111;
+            background: transparent;
         }
 
         .contact-wrapper {
             max-width: 1200px;
-            margin: -40px auto 0;
+            margin: 30px auto 0;
             padding: 0 20px 60px;
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -57,7 +62,7 @@
         }
 
         .contact-form-card {
-            background: #1a1a2e;
+            background: #174C4F;
             border: 1px solid rgba(212,175,55,0.15);
             border-radius: 12px;
             padding: 40px;
@@ -101,8 +106,8 @@
             font-family: inherit;
             transition: border-color 0.3s;
             box-sizing: border-box;
-            background: rgba(255,255,255,0.05);
-            color: #fff;
+            background: #ffffff;
+            color: #222;
         }
         .contact-form-card input::placeholder,
         .contact-form-card textarea::placeholder {
@@ -112,8 +117,8 @@
             color: rgba(255,255,255,0.7);
         }
         .contact-form-card select option {
-            background: #1a1a2e;
-            color: #fff;
+            background: #ffffff;
+            color: #222;
         }
         .contact-form-card input:focus,
         .contact-form-card select:focus,
@@ -175,7 +180,7 @@
         }
 
         .info-card {
-            background: #1a1a2e;
+            background: #174C4F;
             border: 1px solid rgba(212,175,55,0.15);
             border-radius: 12px;
             padding: 30px;
@@ -347,6 +352,7 @@
                                                             <li class="menu-item"><a href="products.html" class="menu-link">Products</a></li>
                                                             <li class="menu-item"><a href="appointment.html" class="menu-link">Book Appointment</a></li>
                                                             <li class="menu-item current-menu-item"><a href="contact.html" class="menu-link">Contact Us</a></li>
+                                                            <li class="menu-item menu-item-has-button"><a class="ast-custom-button-link" href="contact.html"><div class="ast-custom-button">Know Your Number</div></a></li>
                                                         </ul>
                                                     </div>
                                                 </nav>
@@ -355,13 +361,6 @@
                                     </div>
                                 </div>
                                 <div class="site-header-primary-section-right site-header-section ast-flex ast-grid-right-section">
-                                    <div class="ast-builder-layout-element ast-flex site-header-focus-item ast-header-button-1" data-section="section-hb-button-1">
-                                        <div class="ast-builder-button-wrap ast-builder-button-size-">
-                                            <a class="ast-custom-button-link" href="contact.html">
-                                                <div class="ast-custom-button">Know Your Number</div>
-                                            </a>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -428,7 +427,7 @@
         </header>
 
         <!-- ============ HERO SECTION ============ -->
-        <div class="contact-hero">
+        <div class="contact-hero animated-hero">
             <canvas id="numerology-bg"></canvas>
             <h1>Contact Us</h1>
             <p>Get in touch with us to book a numerology consultation or ask any questions. We're here to help you unlock the power of numbers.</p>
@@ -545,6 +544,15 @@
                 <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3769.6!2d72.93!3d19.15!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sBhandup+West%2C+Mumbai!5e0!3m2!1sen!2sin!4v1" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
         </div>
+
+        <!-- CTA Section -->
+        <section class="pn-cta">
+            <div class="pn-cta-inner">
+                <h2>Ready to Discover Your Numbers?</h2>
+                <p>Book a personal numerology consultation with Sangita Sawant and start your journey towards clarity, balance, and success.</p>
+                <a href="contact.html" class="cta-btn">Book Your Reading</a>
+            </div>
+        </section>
 
         <!-- ============ FOOTER ============ -->
         <footer class="site-footer" id="colophon">

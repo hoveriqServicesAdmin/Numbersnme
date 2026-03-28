@@ -9,12 +9,17 @@
     <style>
         /* ── Dark Numerology Theme ── */
         .appt-hero {
-            background: #0a0a0a;
+            background: #1E3838;
             color: #fff;
             text-align: center;
-            padding: 80px 20px 70px;
+            padding: 75px 20px;
             position: relative;
             overflow: hidden;
+            margin-top: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
         .appt-hero canvas {
             position: absolute;
@@ -42,14 +47,13 @@
         }
 
         #content {
-            background: #111;
-            padding-bottom: 60px;
+            background: transparent;
         }
 
         .appt-container {
             max-width: 900px;
-            margin: -40px auto 0;
-            padding: 0 20px;
+            margin: 30px auto 0;
+            padding: 0 20px 60px;
             position: relative;
             z-index: 2;
         }
@@ -65,7 +69,7 @@
             padding: 14px 20px;
             border: 1px solid rgba(212,175,55,0.3);
             border-radius: 8px;
-            background: rgba(26,26,46,0.6);
+            background: #174C4F;
             color: rgba(255,255,255,0.7);
             font-family: inherit;
             font-size: 0.95rem;
@@ -89,7 +93,7 @@
 
         /* ── Card ── */
         .appt-card {
-            background: #1a1a2e;
+            background: #174C4F;
             border: 1px solid rgba(212,175,55,0.15);
             border-radius: 12px;
             padding: 35px 40px;
@@ -133,8 +137,8 @@
             font-family: inherit;
             transition: border-color 0.3s;
             box-sizing: border-box;
-            background: rgba(255,255,255,0.05);
-            color: #fff;
+            background: #e6f2ef;
+            color: #222;
         }
         .form-group input::placeholder {
             color: rgba(255,255,255,0.35);
@@ -143,8 +147,8 @@
             color: rgba(255,255,255,0.7);
         }
         .form-group select option {
-            background: #1a1a2e;
-            color: #fff;
+            background: #e6f2ef;
+            color: #222;
         }
         .form-group input:focus,
         .form-group select:focus {
@@ -446,6 +450,7 @@
                                                             <li class="menu-item"><a href="products.html" class="menu-link">Products</a></li>
                                                             <li class="menu-item current-menu-item"><a href="appointment.html" class="menu-link">Book Appointment</a></li>
                                                             <li class="menu-item"><a href="contact.html" class="menu-link">Contact Us</a></li>
+                                                            <li class="menu-item menu-item-has-button"><a class="ast-custom-button-link" href="contact.html"><div class="ast-custom-button">Know Your Number</div></a></li>
                                                         </ul>
                                                     </div>
                                                 </nav>
@@ -454,13 +459,6 @@
                                     </div>
                                 </div>
                                 <div class="site-header-primary-section-right site-header-section ast-flex ast-grid-right-section">
-                                    <div class="ast-builder-layout-element ast-flex site-header-focus-item ast-header-button-1" data-section="section-hb-button-1">
-                                        <div class="ast-builder-button-wrap ast-builder-button-size-">
-                                            <a class="ast-custom-button-link" href="contact.html">
-                                                <div class="ast-custom-button">Know Your Number</div>
-                                            </a>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -527,7 +525,7 @@
         </header>
 
         <!-- ============ HERO SECTION ============ -->
-        <div class="appt-hero">
+        <div class="appt-hero animated-hero">
             <canvas id="numerology-bg"></canvas>
             <h1>Book an Appointment</h1>
             <p>Schedule a one-on-one numerology consultation with our expert. Choose a convenient date and time slot.</p>
@@ -664,6 +662,15 @@
 
             </div>
         </div>
+
+        <!-- CTA Section -->
+        <section class="pn-cta">
+            <div class="pn-cta-inner">
+                <h2>Ready to Discover Your Numbers?</h2>
+                <p>Book a personal numerology consultation with Sangita Sawant and start your journey towards clarity, balance, and success.</p>
+                <a href="contact.html" class="cta-btn">Book Your Reading</a>
+            </div>
+        </section>
 
         <!-- ============ FOOTER ============ -->
         <footer class="site-footer" id="colophon">
