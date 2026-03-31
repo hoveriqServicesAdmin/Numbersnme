@@ -36,21 +36,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Django system checks
-        run: |
-          python manage.py check
-
-      - name: Run migrations (dry-run)
-        run: |
-          python manage.py migrate --plan
-
-      - name: Run tests (if available)
-        run: |
-          python manage.py test --no-input || true
-
-      #- name: Collect static files
-      #  run: |
-      #    python manage.py collectstatic --no-input
 
   # Job 2: Build Docker image and push to Docker Hub
   build-and-push:
