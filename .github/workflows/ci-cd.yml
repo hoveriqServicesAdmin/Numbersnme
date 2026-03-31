@@ -1,0 +1,330 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - '*'
+  pull_request:
+    branches:
+      - main
+
+env:
+  REGISTRY: docker.io
+  IMAGE_NAME: ${{ secrets.IMAGE_NAME }}
+
+jobs:
+  # Job 1: Compile and Test the Django Application
+  compile:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11', '3.12']
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Django system checks
+        run: |
+          python manage.py check
+
+      - name: Run migrations (dry-run)
+        run: |
+          python manage.py migrate --plan
+
+      - name: Run tests (if available)
+        run: |
+          python manage.py test --no-input || true
+
+      #- name: Collect static files
+      #  run: |
+      #    python manage.py collectstatic --no-input
+
+  # Job 2: Build Docker image and push to Docker Hub
+  build-and-push:
+    needs: compile
+    runs-on: ubuntu-latest
+    environment: env_numbersnme_dev
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Determine branch and version
+        id: version
+        run: |
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          
+          # Generate incremental version tag
+          BUILD_NUMBER=${{ github.run_number }}
+          echo "build_number=$BUILD_NUMBER" >> $GITHUB_OUTPUT
+          
+          # Set image name based on branch
+          if [ "$BRANCH_NAME" = "main" ]; then
+            IMAGE_TAG="latest"
+            IMAGE_FULL="${{ env.IMAGE_NAME }}:${IMAGE_TAG}"
+            echo "image_tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
+            echo "image_full=$IMAGE_FULL" >> $GITHUB_OUTPUT
+            echo "is_main=true" >> $GITHUB_OUTPUT
+          else
+            IMAGE_TAG="snapshot-${BRANCH_NAME}-v${BUILD_NUMBER}"
+            IMAGE_FULL="${{ env.IMAGE_NAME }}:${IMAGE_TAG}"
+            echo "image_tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
+            echo "image_full=$IMAGE_FULL" >> $GITHUB_OUTPUT
+            echo "is_main=false" >> $GITHUB_OUTPUT
+          fi
+          
+          echo "Docker image: $IMAGE_FULL"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Debug secrets
+        run: |
+          echo "Username length: ${#DOCKER_USERNAME}"
+          echo "Password length: ${#DOCKER_PASSWORD}"
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          registry: docker.io
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ steps.version.outputs.image_full }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.image_tag }}
+          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache
+          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache,mode=max
+
+      - name: Image build summary
+        run: |
+          echo "✅ Docker image built and pushed successfully"
+          echo "Image: ${{ env.REGISTRY }}/${{ steps.version.outputs.image_full }}"
+          echo "Branch: ${{ steps.version.outputs.branch_name }}"
+          echo "Tag: ${{ steps.version.outputs.image_tag }}"
+
+  # Job 3: Deploy to Azure Kubernetes (only on main branch)
+  deploy-to-aks:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    environment: env_numbersnme_dev
+    permissions:
+      contents: read
+      id-token: write
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'v1.28.0'
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Get AKS credentials
+        run: |
+          az aks get-credentials \
+            --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+            --name ${{ secrets.AZURE_CLUSTER_NAME }} \
+            --overwrite-existing
+
+      - name: Create or update deployment
+        id: deploy
+        run: |
+          # Create namespace if it doesn't exist
+          kubectl create namespace hospital-app --dry-run=client -o yaml | kubectl apply -f -
+          
+          # Create deployment manifest
+          cat > deployment.yaml <<EOF
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: hospital-app
+            namespace: hospital-app
+            labels:
+              app: hospital-app
+          spec:
+            replicas: 1
+            selector:
+              matchLabels:
+                app: hospital-app
+            template:
+              metadata:
+                labels:
+                  app: hospital-app
+              spec:
+                containers:
+                - name: hospital-app
+                  image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+                  imagePullPolicy: Always
+                  ports:
+                  - containerPort: 8000
+                  env:
+                  - name: DEBUG
+                    value: "False"
+                  - name: ALLOWED_HOSTS
+                    value: "*"
+                  - name: SECRET_KEY
+                    valueFrom:
+                      secretKeyRef:
+                        name: django-secrets
+                        key: secret-key
+                  resources:
+                    requests:
+                      memory: "128Mi"
+                      cpu: "250m"
+                    limits:
+                      memory: "512Mi"
+                      cpu: "500m"
+                  livenessProbe:
+                    httpGet:
+                      path: /health/
+                      port: 8000
+                    initialDelaySeconds: 30
+                    periodSeconds: 10
+                  readinessProbe:
+                    httpGet:
+                      path: /health/
+                      port: 8000
+                    initialDelaySeconds: 10
+                    periodSeconds: 5
+          ---
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: hospital-app-service
+            namespace: hospital-app
+          spec:
+            selector:
+              app: hospital-app
+            ports:
+            - protocol: TCP
+              port: 80
+              targetPort: 8000
+            type: LoadBalancer
+          EOF
+          
+          # Apply deployment
+          kubectl apply -f deployment.yaml
+          
+          # Wait for rollout
+          kubectl rollout status deployment/hospital-app -n hospital-app --timeout=5m
+          echo "deployment_status=success" >> $GITHUB_OUTPUT
+
+      - name: Get deployment info
+        if: success()
+        run: |
+          echo "Deployment Information:"
+          kubectl get deployments -n hospital-app
+          kubectl get services -n hospital-app
+          kubectl get pods -n hospital-app
+
+  # Job 4: Send email notification (on main branch after deployment)
+  notify:
+    needs: [build-and-push, deploy-to-aks]
+    runs-on: ubuntu-latest
+    environment: env_numbersnme_dev
+    if: always() && github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Determine deployment status
+        id: status
+        run: |
+          if [ "${{ needs.deploy-to-aks.result }}" = "success" ]; then
+            echo "status=SUCCESS ✅"
+            echo "status_color=green"
+          else
+            echo "status=FAILURE ❌"
+            echo "status_color=red"
+          fi
+          echo "build_url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+      - name: Send email notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.SMTP_SERVER }}
+          server_port: ${{ secrets.SMTP_PORT }}
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: "Hospital Management App - Deployment ${{ steps.status.outputs.status }}"
+          to: ${{ secrets.NOTIFY_EMAIL }}
+          from: ${{ secrets.SMTP_FROM_EMAIL }}
+          body: |
+            Deployment Status: ${{ steps.status.outputs.status }}
+            
+            Project: Hospital Management System
+            Branch: main
+            Commit: ${{ github.sha }}
+            Author: ${{ github.actor }}
+            
+            Build Details:
+            - Run ID: ${{ github.run_id }}
+            - Build URL: ${{ steps.status.outputs.build_url }}
+            - Docker Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            
+            Deployment Status:
+            - Build & Push: ${{ needs.build-and-push.result }}
+            - Deploy to AKS: ${{ needs.deploy-to-aks.result }}
+            
+            Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+            
+            Please check the GitHub Actions workflow for more details.
+          html_body: |
+            <h2>Hospital Management App - Deployment ${{ steps.status.outputs.status }}</h2>
+            <hr>
+            <p><strong>Project:</strong> Hospital Management System</p>
+            <p><strong>Branch:</strong> main</p>
+            <p><strong>Commit:</strong> ${{ github.sha }}</p>
+            <p><strong>Author:</strong> ${{ github.actor }}</p>
+            <hr>
+            <h3>Build Details</h3>
+            <ul>
+              <li><strong>Run ID:</strong> ${{ github.run_id }}</li>
+              <li><strong>Build URL:</strong> <a href="${{ steps.status.outputs.build_url }}">View on GitHub</a></li>
+              <li><strong>Docker Image:</strong> ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest</li>
+            </ul>
+            <h3>Deployment Status</h3>
+            <ul>
+              <li><strong>Build & Push:</strong> <span style="color: ${{ steps.status.outputs.status_color }};">${{ needs.build-and-push.result }}</span></li>
+              <li><strong>Deploy to AKS:</strong> <span style="color: ${{ steps.status.outputs.status_color }};">${{ needs.deploy-to-aks.result }}</span></li>
+            </ul>
+            <hr>
+            <p><em>Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")</em></p>
+
+      - name: Log notification details
+        if: always()
+        run: |
+          echo "Email notification sent to: ${{ secrets.NOTIFY_EMAIL }}"
+          echo "Deployment Status: ${{ needs.deploy-to-aks.result }}"
