@@ -117,6 +117,9 @@
             grid-template-columns: 1fr 1fr;
             gap: 15px;
         }
+        .form-row.three-col {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
         .form-group {
             margin-bottom: 18px;
         }
@@ -144,7 +147,7 @@
             color: rgba(255,255,255,0.35);
         }
         .form-group select {
-            color: rgba(255,255,255,0.7);
+            color: #222;
         }
         .form-group select option {
             background: #e6f2ef;
@@ -414,6 +417,48 @@
             .tab-switcher { flex-direction: column; }
             .lookup-row { flex-direction: column; }
         }
+
+        @media (max-width: 480px) {
+            .appt-hero {
+                padding: 40px 8px;
+            }
+            .appt-hero h1 {
+                font-size: 1.2em;
+            }
+            .appt-hero p {
+                font-size: 0.98em;
+                padding: 0 2px;
+            }
+            .appt-container {
+                padding: 0 4px 30px;
+                margin-top: -20px;
+            }
+            .appt-card {
+                padding: 12px 4px;
+            }
+            .tab-switcher button {
+                padding: 10px 6px;
+                font-size: 0.9rem;
+            }
+            .appt-submit-btn {
+                padding: 10px 0;
+                font-size: 0.95rem;
+            }
+            .form-group input, .form-group select {
+                padding: 8px 8px;
+                font-size: 0.95em;
+            }
+            .current-booking-info {
+                padding: 10px;
+            }
+            .hours-info {
+                padding: 10px 6px;
+            }
+            .wa-notify-btn {
+                padding: 10px 8px;
+                font-size: 0.9rem;
+            }
+        }
     </style>
 </head>
 <body class="page ast-desktop ast-separate-container ast-no-sidebar">
@@ -528,7 +573,7 @@
         <div class="appt-hero animated-hero">
             <canvas id="numerology-bg"></canvas>
             <h1>Book an Appointment</h1>
-            <p>Schedule a one-on-one numerology consultation with our expert. Choose a convenient date and time slot.</p>
+            <p>Schedule a one-on-one numerology consultation with our expert. Choose your preferred appointment date and share your details.</p>
         </div>
 
         <!-- ============ MAIN CONTENT ============ -->
@@ -547,7 +592,7 @@
                 <div id="book-tab" class="tab-panel active">
                     <div class="appt-card">
                         <h2>Schedule Your Session</h2>
-                        <p class="subtitle">Each consultation slot is 1 hour. Pick a date to see available times.</p>
+                        <p class="subtitle">Appointments are now date-based. Pick your preferred date and submit your details.</p>
 
                         <div id="book-status" class="appt-status"></div>
 
@@ -556,21 +601,31 @@
 
                         <!-- Booking Form -->
                         <form id="booking-form">
-                            <div class="form-row">
+                            <div class="form-row three-col">
                                 <div class="form-group">
-                                    <label for="book-name">Full Name *</label>
-                                    <input type="text" id="book-name" required placeholder="Enter your full name">
+                                    <label for="book-first-name">First Name *</label>
+                                    <input type="text" id="book-first-name" required placeholder="Enter first name">
                                 </div>
                                 <div class="form-group">
-                                    <label for="book-email">Email Address *</label>
-                                    <input type="email" id="book-email" required placeholder="Enter your email">
+                                    <label for="book-middle-name">Middle Name</label>
+                                    <input type="text" id="book-middle-name" placeholder="Enter middle name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="book-last-name">Last Name *</label>
+                                    <input type="text" id="book-last-name" required placeholder="Enter last name">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
+                                    <label for="book-email">Email Address *</label>
+                                    <input type="email" id="book-email" required placeholder="Enter your email">
+                                </div>
+                                <div class="form-group">
                                     <label for="book-phone">Phone Number *</label>
                                     <input type="tel" id="book-phone" required placeholder="+91 XXXXXXXXXX">
                                 </div>
+                            </div>
+                            <div class="form-row">
                                 <div class="form-group">
                                     <label for="book-service">Service Interested In</label>
                                     <select id="book-service">
@@ -584,6 +639,10 @@
                                         <option value="Other">Other</option>
                                     </select>
                                 </div>
+                                <div class="form-group">
+                                    <label for="book-dob">Date of Birth *</label>
+                                    <input type="date" id="book-dob" required>
+                                </div>
                             </div>
 
                             <div class="form-group">
@@ -591,24 +650,17 @@
                                 <input type="date" id="appt-date" required>
                             </div>
 
-                            <!-- Slot grid appears after date is picked -->
-                            <div id="slot-area" style="display:none;">
-                                <p class="slots-heading" id="slots-label">Available Time Slots</p>
-                                <div id="slot-grid" class="slot-grid"></div>
-                            </div>
-
                             <!-- Working hours info -->
                             <div class="hours-info">
-                                <h4>🕐 Working Hours</h4>
+                                <h4>📌 Booking Notes</h4>
                                 <table>
-                                    <tr><td>Monday – Friday</td><td>10:00 AM – 7:00 PM</td></tr>
-                                    <tr><td>Saturday</td><td>10:00 AM – 5:00 PM</td></tr>
+                                    <tr><td>Appointment Mode</td><td>Date-based booking</td></tr>
+                                    <tr><td>Follow-up</td><td>Our team will confirm after reviewing your details</td></tr>
                                     <tr><td>Sunday</td><td>By appointment only (contact via WhatsApp)</td></tr>
                                 </table>
                             </div>
 
-                            <input type="hidden" id="selected-slot" value="">
-                            <button type="submit" class="appt-submit-btn" id="book-btn" disabled>Select a Date &amp; Time Slot First</button>
+                            <button type="submit" class="appt-submit-btn" id="book-btn" disabled>Select a Date First</button>
                         </form>
                     </div>
                 </div>
@@ -619,28 +671,29 @@
                 <div id="reschedule-tab" class="tab-panel">
                     <div class="appt-card">
                         <h2>Reschedule Your Appointment</h2>
-                        <p class="subtitle">Enter your booking reference code to look up and reschedule your appointment.</p>
+                        <p class="subtitle">Search your booking by reference, name, phone, or email to reschedule your appointment date.</p>
 
                         <div id="resched-status" class="appt-status"></div>
 
-                        <!-- Step 1: Lookup -->
-                        <div id="resched-lookup">
+                        <!-- Step 1: Search & Lookup -->
+                        <div id="resched-search">
                             <div class="form-group">
-                                <label for="resched-ref">Booking Reference Code *</label>
+                                <label for="resched-search-input">Search Booking *</label>
                                 <div class="lookup-row">
-                                    <input type="text" id="resched-ref" placeholder="e.g. NMAB12CD" style="text-transform:uppercase;">
-                                    <button type="button" class="lookup-btn" id="lookup-btn" onclick="lookupBooking()">Look Up</button>
+                                    <input type="text" id="resched-search-input" placeholder="Enter reference, name, phone, or email">
+                                    <button type="button" class="lookup-btn" id="search-btn">Search</button>
                                 </div>
                             </div>
+                            <div id="search-results" style="margin-top:10px;"></div>
                         </div>
 
-                        <!-- Step 2: Current Booking + New Slot Picker (hidden initially) -->
+                        <!-- Step 2: Current Booking + New Date Picker (hidden initially) -->
                         <div id="resched-details" style="display:none;">
                             <div class="current-booking-info" id="current-booking-info" style="display:block;">
                                 <h4>📋 Current Booking</h4>
                                 <p class="detail"><strong>Name:</strong> <span id="cb-name"></span></p>
+                                <p class="detail"><strong>DOB:</strong> <span id="cb-dob"></span></p>
                                 <p class="detail"><strong>Date:</strong> <span id="cb-date"></span></p>
-                                <p class="detail"><strong>Time:</strong> <span id="cb-time"></span></p>
                                 <p class="detail"><strong>Service:</strong> <span id="cb-service"></span></p>
                             </div>
 
@@ -649,13 +702,7 @@
                                 <input type="date" id="resched-date">
                             </div>
 
-                            <div id="resched-slot-area" style="display:none;">
-                                <p class="slots-heading">Available Time Slots</p>
-                                <div id="resched-slot-grid" class="slot-grid"></div>
-                            </div>
-
-                            <input type="hidden" id="resched-selected-slot" value="">
-                            <button type="button" class="appt-submit-btn" id="resched-btn" disabled onclick="submitReschedule()">Select New Date &amp; Time First</button>
+                            <button type="button" class="appt-submit-btn" id="resched-btn" disabled onclick="submitReschedule()">Select New Date First</button>
                         </div>
                     </div>
                 </div>
@@ -743,95 +790,81 @@
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('appt-date').setAttribute('min', today);
         document.getElementById('resched-date').setAttribute('min', today);
+        document.getElementById('book-dob').setAttribute('max', today);
     })();
 
     // ── State ──
-    let selectedSlot = '';
-    let reschedSelectedSlot = '';
     let currentBookingRef = '';
 
-    // ── Load Slots for a Date ──
-    async function loadSlots(dateStr, gridId, onSelect) {
-        const grid = document.getElementById(gridId);
-        grid.innerHTML = '<p style="color:rgba(255,255,255,0.5);text-align:center;grid-column:1/-1;">Loading slots...</p>';
-        document.getElementById(gridId === 'slot-grid' ? 'slot-area' : 'resched-slot-area').style.display = 'block';
-
-        try {
-            const resp = await fetch(`/api/slots?date=${dateStr}`);
-            const data = await resp.json();
-
-            if (!data.success) {
-                grid.innerHTML = `<p style="color:#ff6b6b;grid-column:1/-1;">${data.error}</p>`;
-                return;
-            }
-
-            if (data.sunday) {
-                grid.innerHTML = `
-                    <div class="sunday-msg" style="grid-column:1/-1;">
-                        <p>🙏 Sundays are by appointment only.</p>
-                        <p>Please contact us directly via <a href="https://wa.me/918425985792" target="_blank">WhatsApp</a> to arrange a Sunday session.</p>
-                    </div>`;
-                return;
-            }
-
-            if (data.slots.length === 0) {
-                grid.innerHTML = '<p style="color:rgba(255,255,255,0.5);grid-column:1/-1;">No slots available for this date.</p>';
-                return;
-            }
-
-            grid.innerHTML = '';
-            data.slots.forEach(slot => {
-                const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.className = 'slot-btn' + (slot.booked ? ' booked' : '');
-                btn.textContent = slot.booked ? `${slot.time} (Booked)` : slot.time;
-                btn.disabled = slot.booked;
-
-                if (!slot.booked) {
-                    btn.addEventListener('click', function() {
-                        grid.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
-                        btn.classList.add('selected');
-                        onSelect(slot.time);
-                    });
-                }
-                grid.appendChild(btn);
-            });
-
-        } catch (err) {
-            grid.innerHTML = '<p style="color:#ff6b6b;grid-column:1/-1;">Failed to load slots. Please try again.</p>';
+    function validateSelectedDate(dateStr) {
+        if (!dateStr) {
+            return { valid: false, message: 'Please choose a date.' };
         }
+
+        const parsed = new Date(`${dateStr}T00:00:00`);
+        if (Number.isNaN(parsed.getTime())) {
+            return { valid: false, message: 'Please choose a valid date.' };
+        }
+
+        if (parsed.getDay() === 0) {
+            return {
+                valid: false,
+                message: 'Sundays are by appointment only. Please contact us directly via WhatsApp.'
+            };
+        }
+
+        return { valid: true, message: '' };
+    }
+
+    function buildDisplayName(firstName, middleName, lastName) {
+        return [firstName, middleName, lastName].filter(Boolean).join(' ');
     }
 
     // ── Date Change: Book Tab ──
     document.getElementById('appt-date').addEventListener('change', function() {
-        selectedSlot = '';
-        document.getElementById('selected-slot').value = '';
         const btn = document.getElementById('book-btn');
-        btn.disabled = true;
-        btn.textContent = 'Select a Time Slot';
+        const statusDiv = document.getElementById('book-status');
+        const validation = validateSelectedDate(this.value);
 
-        loadSlots(this.value, 'slot-grid', function(time) {
-            selectedSlot = time;
-            document.getElementById('selected-slot').value = time;
-            btn.disabled = false;
-            btn.textContent = `Book ${time} Slot`;
-        });
+        if (!validation.valid) {
+            btn.disabled = true;
+            btn.textContent = 'Select a Date First';
+            if (this.value && validation.message) {
+                statusDiv.className = 'appt-status info';
+                statusDiv.textContent = validation.message;
+            } else {
+                statusDiv.className = 'appt-status';
+                statusDiv.style.display = 'none';
+            }
+            return;
+        }
+
+        statusDiv.className = 'appt-status';
+        statusDiv.style.display = 'none';
+        btn.disabled = false;
+        btn.textContent = `Book Appointment for ${this.value}`;
     });
 
     // ── Date Change: Reschedule Tab ──
     document.getElementById('resched-date').addEventListener('change', function() {
-        reschedSelectedSlot = '';
-        document.getElementById('resched-selected-slot').value = '';
         const btn = document.getElementById('resched-btn');
-        btn.disabled = true;
-        btn.textContent = 'Select a New Time Slot';
+        const statusDiv = document.getElementById('resched-status');
+        const validation = validateSelectedDate(this.value);
 
-        loadSlots(this.value, 'resched-slot-grid', function(time) {
-            reschedSelectedSlot = time;
-            document.getElementById('resched-selected-slot').value = time;
-            btn.disabled = false;
-            btn.textContent = `Reschedule to ${time}`;
-        });
+        if (!validation.valid) {
+            btn.disabled = true;
+            btn.textContent = 'Select New Date First';
+            if (this.value && validation.message) {
+                statusDiv.className = 'appt-status info';
+                statusDiv.textContent = validation.message;
+            }
+            return;
+        }
+
+        statusDiv.className = 'appt-status';
+        statusDiv.style.display = 'none';
+        btn.disabled = false;
+        btn.textContent = `Reschedule to ${this.value}`;
     });
 
     // ── Submit Booking ──
@@ -841,16 +874,27 @@
         const btn = document.getElementById('book-btn');
         const statusDiv = document.getElementById('book-status');
 
-        const name = document.getElementById('book-name').value.trim();
+        const firstName = document.getElementById('book-first-name').value.trim();
+        const middleName = document.getElementById('book-middle-name').value.trim();
+        const lastName = document.getElementById('book-last-name').value.trim();
         const email = document.getElementById('book-email').value.trim();
         const phone = document.getElementById('book-phone').value.trim();
         const service = document.getElementById('book-service').value;
+        const dob = document.getElementById('book-dob').value;
         const dateVal = document.getElementById('appt-date').value;
-        const timeSlot = document.getElementById('selected-slot').value;
+        const validation = validateSelectedDate(dateVal);
+        const name = buildDisplayName(firstName, middleName, lastName);
 
-        if (!name || !email || !phone || !dateVal || !timeSlot) {
+        if (!firstName || !lastName || !email || !phone || !dob || !dateVal) {
             statusDiv.className = 'appt-status error';
-            statusDiv.textContent = 'Please fill in all required fields and select a time slot.';
+            statusDiv.textContent = 'Please fill in first name, last name, DOB, phone, email, and your appointment date.';
+            statusDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            return;
+        }
+
+        if (!validation.valid) {
+            statusDiv.className = 'appt-status error';
+            statusDiv.textContent = validation.message;
             statusDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             return;
         }
@@ -864,7 +908,16 @@
             const resp = await fetch('/api/book', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, phone, service, date: dateVal, time_slot: timeSlot })
+                body: JSON.stringify({
+                    first_name: firstName,
+                    middle_name: middleName,
+                    last_name: lastName,
+                    email,
+                    phone,
+                    service,
+                    dob,
+                    date: dateVal
+                })
             });
             const data = await resp.json();
 
@@ -879,7 +932,8 @@
                         <h3>Appointment Booked Successfully!</h3>
                         <p>Your booking reference code:</p>
                         <div class="ref-code">${data.booking_ref}</div>
-                        <p class="detail-line">📅 ${dateVal} &nbsp;|&nbsp; 🕐 ${timeSlot}</p>
+                        <p class="detail-line">📅 ${dateVal}</p>
+                        <p class="detail-line">🎂 ${dob}</p>
                         <p class="detail-line">👤 ${name} &nbsp;|&nbsp; 📧 ${email}</p>
                         <p style="color:rgba(255,255,255,0.5);font-size:0.82em;margin-top:12px;">
                             ⚠️ Please save this reference code – you'll need it to reschedule.
@@ -900,82 +954,111 @@
                 statusDiv.className = 'appt-status error';
                 statusDiv.textContent = data.error || 'Booking failed. Please try again.';
                 btn.disabled = false;
-                btn.textContent = `Book ${timeSlot} Slot`;
+                btn.textContent = `Book Appointment for ${dateVal}`;
             }
 
         } catch (err) {
             statusDiv.className = 'appt-status error';
             statusDiv.textContent = 'Network error. Please check your connection and try again.';
             btn.disabled = false;
-            btn.textContent = `Book ${timeSlot} Slot`;
+            btn.textContent = `Book Appointment for ${dateVal}`;
         }
 
         statusDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     });
 
     // ── Lookup Booking for Reschedule ──
-    async function lookupBooking() {
-        const ref = document.getElementById('resched-ref').value.trim().toUpperCase();
+    async function lookupBooking(ref) {
         const statusDiv = document.getElementById('resched-status');
-        const lookupBtn = document.getElementById('lookup-btn');
-
         if (!ref) {
             statusDiv.className = 'appt-status error';
-            statusDiv.textContent = 'Please enter your booking reference code.';
+            statusDiv.textContent = 'Please select a booking from search results.';
             return;
         }
-
-        lookupBtn.textContent = 'Looking up...';
-        lookupBtn.disabled = true;
         statusDiv.className = 'appt-status';
         statusDiv.style.display = 'none';
-
         try {
             const resp = await fetch(`/api/booking/${ref}`);
             const data = await resp.json();
-
             if (data.success) {
                 currentBookingRef = ref;
                 const b = data.booking;
-
                 document.getElementById('cb-name').textContent = b.name;
+                document.getElementById('cb-dob').textContent = b.dob || 'Not provided';
                 document.getElementById('cb-date').textContent = b.appointment_date;
-                document.getElementById('cb-time').textContent = b.time_slot;
                 document.getElementById('cb-service').textContent = b.service || 'Not specified';
-
                 document.getElementById('resched-details').style.display = 'block';
-
                 statusDiv.className = 'appt-status info';
-                statusDiv.textContent = `Booking found! Select a new date and time below.`;
+                statusDiv.textContent = `Booking found! Select a new date below.`;
             } else {
                 statusDiv.className = 'appt-status error';
-                statusDiv.textContent = data.error || 'Booking not found.';
+                statusDiv.textContent = data.error || 'No booking found.';
             }
-
         } catch (err) {
             statusDiv.className = 'appt-status error';
             statusDiv.textContent = 'Network error. Please try again.';
         }
-
-        lookupBtn.textContent = 'Look Up';
-        lookupBtn.disabled = false;
     }
 
-    // Allow Enter key on ref input
-    document.getElementById('resched-ref').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') { e.preventDefault(); lookupBooking(); }
+    // ── Booking Search Logic ──
+    document.getElementById('search-btn').addEventListener('click', async function() {
+        const q = document.getElementById('resched-search-input').value.trim();
+        const resultsDiv = document.getElementById('search-results');
+        const statusDiv = document.getElementById('resched-status');
+        resultsDiv.innerHTML = '';
+        document.getElementById('resched-details').style.display = 'none';
+        if (!q) {
+            statusDiv.className = 'appt-status error';
+            statusDiv.textContent = 'Please enter a search term.';
+            return;
+        }
+        statusDiv.className = 'appt-status';
+        statusDiv.style.display = 'none';
+        resultsDiv.innerHTML = 'Searching...';
+        try {
+            const resp = await fetch(`/api/booking/search?q=${encodeURIComponent(q)}`);
+            const data = await resp.json();
+            if (data.success && data.results && data.results.length > 0) {
+                let html = '<div style="margin-bottom:8px;">Select your booking:</div>';
+                html += '<ul style="list-style:none;padding:0;">';
+                data.results.forEach(b => {
+                    html += `<li style=\"margin-bottom:8px;\">\n` +
+                        `<button type=\"button\" style=\"width:100%;text-align:left;padding:10px;border-radius:6px;border:1px solid #d4af37;background:#1E3838;color:#fff;cursor:pointer;\" onclick=\"lookupBooking('${b.booking_ref}')\">` +
+                            `<strong>${b.name}</strong> &nbsp; <span style='color:#d4af37;'>[${b.booking_ref}]</span><br>` +
+                            `<span style='font-size:0.95em;color:#b5b5b5;'>${b.phone || ''} ${b.email ? ' | ' + b.email : ''} ${b.appointment_date ? ' | ' + b.appointment_date : ''}</span>` +
+                        `</button>\n` +
+                    `</li>`;
+                });
+                html += '</ul>';
+                resultsDiv.innerHTML = html;
+            } else {
+                resultsDiv.innerHTML = '';
+                statusDiv.className = 'appt-status error';
+                statusDiv.textContent = 'No bookings found for your search.';
+            }
+        } catch (err) {
+            resultsDiv.innerHTML = '';
+            statusDiv.className = 'appt-status error';
+            statusDiv.textContent = 'Network error. Please try again.';
+        }
     });
 
     // ── Submit Reschedule ──
     async function submitReschedule() {
         const newDate = document.getElementById('resched-date').value;
-        const newTime = document.getElementById('resched-selected-slot').value;
         const statusDiv = document.getElementById('resched-status');
         const btn = document.getElementById('resched-btn');
+        const validation = validateSelectedDate(newDate);
 
-        if (!newDate || !newTime) {
+        if (!newDate) {
             statusDiv.className = 'appt-status error';
-            statusDiv.textContent = 'Please select a new date and time slot.';
+            statusDiv.textContent = 'Please select a new appointment date.';
+            return;
+        }
+
+        if (!validation.valid) {
+            statusDiv.className = 'appt-status error';
+            statusDiv.textContent = validation.message;
             return;
         }
 
@@ -988,7 +1071,7 @@
             const resp = await fetch(`/api/reschedule/${currentBookingRef}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ new_date: newDate, new_time_slot: newTime })
+                body: JSON.stringify({ new_date: newDate })
             });
             const data = await resp.json();
 
@@ -998,7 +1081,6 @@
 
                 // Update displayed current booking
                 document.getElementById('cb-date').textContent = newDate;
-                document.getElementById('cb-time').textContent = newTime;
 
                 // Auto-open WhatsApp
                 if (data.whatsapp_url) {
@@ -1012,14 +1094,14 @@
                 statusDiv.className = 'appt-status error';
                 statusDiv.textContent = data.error || 'Reschedule failed. Please try again.';
                 btn.disabled = false;
-                btn.textContent = `Reschedule to ${newTime}`;
+                btn.textContent = `Reschedule to ${newDate}`;
             }
 
         } catch (err) {
             statusDiv.className = 'appt-status error';
             statusDiv.textContent = 'Network error. Please try again.';
             btn.disabled = false;
-            btn.textContent = `Reschedule to ${newTime}`;
+            btn.textContent = `Reschedule to ${newDate}`;
         }
 
         statusDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -1080,4 +1162,6 @@
     </script>
 </body>
 </html>
+
+
 

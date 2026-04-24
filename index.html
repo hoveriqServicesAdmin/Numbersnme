@@ -16,20 +16,48 @@
             --light-bg: #F0F0F0;
             --white: #FFFFFF;
         }
-        body { margin: 0; font-family: 'Poppins', sans-serif; color: var(--gray); }
+        body { margin: 0; font-family: 'Poppins', sans-serif; color: var(--gray); overflow-x: hidden; }
 
         /* ══════ HERO ══════ */
         .hero-section {
-            min-height: 500px;
-            background: url('images/animated_banner.gif') center/cover no-repeat;
+            padding: 22px 20px 8px;
+            background: linear-gradient(180deg, #fff 0%, #f8f7fb 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            text-align: center;
             position: relative;
         }
         .hero-section::before {
             display: none;
+        }
+        .hero-shell {
+            width: min(1180px, 100%);
+            margin: 0 auto;
+            padding: 12px;
+            border-radius: 28px;
+            background: linear-gradient(135deg, rgba(85,1,124,0.08), rgba(4,140,42,0.08));
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+            box-sizing: border-box;
+        }
+        .hero-banner {
+            overflow: hidden;
+            border-radius: 22px;
+            background: #fff;
+        }
+        .hero-banner img {
+            display: block;
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            aspect-ratio: 16 / 7;
+            object-fit: cover;
+            object-position: center;
+            transform: scale(0.97);
+            transform-origin: center;
+            transition: transform 0.35s ease;
+        }
+        .hero-section:hover .hero-banner img {
+            transform: scale(1);
         }
         .hero-content {
             position: relative;
@@ -83,7 +111,7 @@
             width: 100%;
             aspect-ratio: 16/9;
             border: none;
-            border-radius: 8px;
+            border-radius: 18px;
         }
 
         /* ══════ WHAT IS NUMEROLOGY ══════ */
@@ -94,6 +122,18 @@
             display: flex;
             gap: 40px;
             align-items: flex-start;
+        }
+        .what-inner .text-col,
+        .why-us-card,
+        .cta-left,
+        .cta-right {
+            border-radius: 18px;
+        }
+        .what-inner .text-col {
+            background: rgba(255,255,255,0.65);
+            padding: 28px;
+            box-sizing: border-box;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
         }
         .what-inner .text-col { flex: 1; }
         .what-inner h2 { color: var(--purple); font-weight: 600; margin: 0 0 15px; }
@@ -107,15 +147,19 @@
             margin: 0 auto;
             display: flex;
             align-items: stretch;
+            gap: 12px;
         }
         .about-img-col { flex: 1; padding: 20px; }
-        .about-img-col img { width: 100%; height: 434px; object-fit: cover; border-radius: 8px; }
+        .about-img-col img { width: 100%; height: 434px; object-fit: cover; border-radius: 18px; }
         .about-text-col {
             flex: 1;
             padding: 30px 20px;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
         }
         .about-text-col h2 { color: var(--green); font-weight: 600; margin: 0 0 12px; }
         .about-text-col p { color: var(--gray); line-height: 1.7; margin: 0 0 8px; }
@@ -146,7 +190,7 @@
         .srv-card:hover .srv-card-inner { transform: rotateY(180deg); }
         .srv-front, .srv-back {
             position: absolute; width: 100%; height: 100%;
-            backface-visibility: hidden; border-radius: 8px;
+            backface-visibility: hidden; border-radius: 18px;
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
             padding: 30px; box-sizing: border-box;
@@ -156,7 +200,7 @@
         }
         .srv-front::before {
             content: ''; position: absolute; inset: 0;
-            background: rgba(0,0,0,0.45); border-radius: 8px;
+            background: rgba(0,0,0,0.45); border-radius: 18px;
         }
         .srv-front h3 { position: relative; z-index: 2; font-size: 1.8em; font-weight: 600; text-align: center; margin: 0; }
         .srv-back {
@@ -182,7 +226,7 @@
             display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
         }
         .why-us-card {
-            background: var(--white); padding: 30px; border-radius: 4px;
+            background: var(--white); padding: 30px; border-radius: 18px;
             box-shadow: 0 5px 7px rgba(0,0,0,0.12); text-align: left;
         }
         .why-us-card .card-title { font-size: 1.2em; font-weight: 600; color: var(--green); margin: 0 0 10px; }
@@ -197,7 +241,7 @@
         }
         .moments-grid img {
             width: 100%; height: 280px; object-fit: cover;
-            border-radius: 8px; transition: transform 0.3s;
+            border-radius: 18px; transition: transform 0.3s;
         }
         .moments-grid img:hover { transform: scale(1.03); }
 
@@ -206,6 +250,7 @@
         .cta-inner {
             max-width: 1100px; margin: 0 auto;
             display: flex; width: 100%; gap: 0;
+            align-items: stretch;
         }
         .cta-left {
             flex: 1; background: var(--white); padding: 40px 35px;
@@ -226,9 +271,16 @@
         }
         .cta-right h2 { color: var(--purple); font-weight: 600; text-align: center; margin: 0 0 5px; }
 
+        .pn-cta {
+            margin-top: 0;
+        }
+
 
         /* ══════ RESPONSIVE ══════ */
         @media (max-width: 900px) {
+            .hero-section { padding: 16px 16px 4px; }
+            .hero-shell { padding: 10px; border-radius: 22px; }
+            .hero-banner { border-radius: 18px; }
             .video-grid { grid-template-columns: 1fr; }
             .what-inner { flex-direction: column; }
             .about-inner { flex-direction: column; }
@@ -238,11 +290,71 @@
             .moments-grid { grid-template-columns: 1fr 1fr; }
             .cta-inner { flex-direction: column; }
             .hero-content h1 { font-size: 2em; }
+            .what-inner .text-col,
+            .about-text-col,
+            .why-us-card,
+            .cta-left,
+            .cta-right { padding: 24px; }
         }
         @media (max-width: 600px) {
+            .hero-section { padding: 12px 12px 0; }
+            .hero-shell {
+                width: 100%;
+                padding: 8px;
+                border-radius: 18px;
+                box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+            }
+            .hero-banner { border-radius: 14px; }
+            .hero-banner img {
+                aspect-ratio: 16 / 9;
+                transform: scale(0.94);
+            }
+            .video-section,
+            .what-section,
+            .services-section,
+            .why-us-section,
+            .moments-section,
+            .cta-section,
+            .pn-cta {
+                padding-left: 14px;
+                padding-right: 14px;
+            }
+            .video-section,
+            .what-section,
+            .why-us-section,
+            .moments-section,
+            .cta-section,
+            .pn-cta { padding-top: 28px; padding-bottom: 28px; }
+            .what-inner,
+            .about-inner,
+            .cta-inner { gap: 20px; }
             .why-us-grid { grid-template-columns: 1fr; }
             .moments-grid { grid-template-columns: 1fr; }
+            .moments-grid img { height: 220px; }
+            .services-grid .srv-card,
+            .srv-card-inner { min-height: 330px; }
+            .what-inner .text-col,
+            .about-text-col,
+            .why-us-card,
+            .cta-left,
+            .cta-right { padding: 20px; }
+            .cta-left .cta-btn,
+            .pn-cta .cta-btn,
+            .srv-back .srv-btn,
+            .hero-btn {
+                width: 100%;
+                text-align: center;
+                box-sizing: border-box;
+            }
             .hero-content h1 { font-size: 1.6em; }
+        }
+        @media (max-width: 420px) {
+            .hero-banner img { transform: scale(0.9); }
+            .what-inner .text-col,
+            .about-text-col,
+            .why-us-card,
+            .cta-left,
+            .cta-right { border-radius: 14px; }
         }
     </style>
 </head>
@@ -358,6 +470,11 @@
 
         <!-- ============ HERO SECTION ============ -->
         <div class="hero-section">
+            <div class="hero-shell">
+                <div class="hero-banner">
+                    <img src="images/animated_banner.png" alt="NumbersNMe landing banner" loading="eager" fetchpriority="high">
+                </div>
+            </div>
         </div>
 
         <!-- ============ VIDEO SECTION ============ -->
@@ -558,7 +675,7 @@
                     <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:40px;">
                         <div>
                             <a href="index.html">
-                                <img width="168" height="83" src="https://numbersnme.com/wp-content/uploads/2025/04/WhatsApp_Image_2025-04-25_at_18.22.21-removebg-preview.png" alt="NumbersNMe" style="max-width:168px;">
+                                <img width="168" height="83" src="https://numbersnme.com/wp-content/logo_yello.png" alt="NumbersNMe" style="max-width:168px;">
                             </a>
                             <div style="margin-top:20px;">
                                 <a href="#" aria-label="Facebook" style="color:#fff;margin-right:15px;font-size:1.2rem;">Facebook</a>

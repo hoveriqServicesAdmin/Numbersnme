@@ -14,13 +14,19 @@ import urllib.parse
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime, date
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, session
+from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__, static_folder='.', static_url_path='')
+app.secret_key = os.environ.get('SECRET_KEY', 'numbersnme-secret-key-2026')
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
 DB_PATH = os.path.join(os.path.dirname(__file__), 'numbersnme.db')
 
 BUSINESS_WHATSAPP = '918425985792'
+ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME', 'Sangeeta')
+ADMIN_PASSWORD_HASH = generate_password_hash(os.environ.get('ADMIN_PASSWORD', 'numbersnme2026'))
 
 # ── Email Configuration ──
 # Use App Password for Gmail (enable 2FA → generate App Password at https://myaccount.google.com/apppasswords)
@@ -174,36 +180,98 @@ def init_db():
             email TEXT NOT NULL,
             service TEXT,
             appointment_date TEXT NOT NULL,
-            time_slot TEXT NOT NULL,
+            time_slot TEXT DEFAULT '',
             status TEXT DEFAULT 'booked',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
-    # Unique index to prevent double-booking
+
+    appointment_columns = {row[1] for row in cursor.execute("PRAGMA table_info(appointments)").fetchall()}
+    if 'time_slot' not in appointment_columns:
+        cursor.execute("ALTER TABLE appointments ADD COLUMN time_slot TEXT DEFAULT ''")
+    if 'first_name' not in appointment_columns:
+        cursor.execute("ALTER TABLE appointments ADD COLUMN first_name TEXT DEFAULT ''")
+    if 'middle_name' not in appointment_columns:
+        cursor.execute("ALTER TABLE appointments ADD COLUMN middle_name TEXT DEFAULT ''")
+    if 'last_name' not in appointment_columns:
+        cursor.execute("ALTER TABLE appointments ADD COLUMN last_name TEXT DEFAULT ''")
+    if 'dob' not in appointment_columns:
+        cursor.execute("ALTER TABLE appointments ADD COLUMN dob TEXT DEFAULT ''")
+
     cursor.execute('''
-        CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_slot
-        ON appointments (appointment_date, time_slot)
-        WHERE status = 'booked'
+        UPDATE appointments
+        SET first_name = COALESCE(first_name, ''),
+            middle_name = COALESCE(middle_name, ''),
+            last_name = COALESCE(last_name, ''),
+            dob = COALESCE(dob, '')
     ''')
+
+    # Time slots are no longer used for booking; remove the old unique slot restriction.
+    cursor.execute("DROP INDEX IF EXISTS idx_unique_slot")
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_appointments_date ON appointments (appointment_date)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_appointments_status ON appointments (status)')
     conn.commit()
     conn.close()
-
-
-# ── Appointment Slot Configuration ──
-SLOTS_MON_FRI = [
-    '10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM',
-    '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'
-]
-SLOTS_SATURDAY = [
-    '10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM',
-    '02:00 PM', '03:00 PM', '04:00 PM'
-]
 
 
 def generate_booking_ref():
     """Generate an 8-character alphanumeric booking reference."""
     return 'NM' + ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+
+
+def generate_unique_booking_ref(cursor):
+    """Generate a unique booking reference not already present in the DB."""
+    while True:
+        booking_ref = generate_booking_ref()
+        row = cursor.execute('SELECT 1 FROM appointments WHERE booking_ref = ?', (booking_ref,)).fetchone()
+        if not row:
+            return booking_ref
+
+
+def parse_booking_date(date_str):
+    """Parse and validate a booking date string."""
+    try:
+        parsed_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+    except ValueError:
+        return None, 'Invalid date format. Use YYYY-MM-DD.'
+
+    if parsed_date < date.today():
+        return None, 'Cannot book past dates.'
+
+    if parsed_date.weekday() == 6:
+        return None, 'Sundays are by appointment only. Please contact us directly via WhatsApp.'
+
+    return parsed_date, None
+
+
+def parse_dob(dob_str):
+    """Parse and validate a DOB string."""
+    try:
+        parsed_dob = datetime.strptime(dob_str, '%Y-%m-%d').date()
+    except ValueError:
+        return None, 'Invalid DOB format. Use YYYY-MM-DD.'
+
+    if parsed_dob > date.today():
+        return None, 'DOB cannot be in the future.'
+
+    return parsed_dob, None
+
+
+def build_full_name(first_name='', middle_name='', last_name='', fallback_name=''):
+    """Combine name parts into a single display name, with legacy fallback support."""
+    name_parts = [part.strip() for part in (first_name, middle_name, last_name) if part and part.strip()]
+    if name_parts:
+        return ' '.join(name_parts)
+    return (fallback_name or '').strip()
+
+
+def is_admin_authenticated():
+    """Return True when the current session belongs to the admin user."""
+    return session.get('admin_username', '').casefold() == ADMIN_USERNAME.casefold()
+
+
+init_db()
 
 
 @app.route('/')
@@ -295,86 +363,102 @@ def get_contacts():
 
 # ══════════════════════════════════════
 #  Appointment Booking Endpoints
+
+# User: Search bookings by reference, name, phone, or email
+@app.route('/api/booking/search', methods=['GET'])
+def search_bookings():
+    """Allow users to search their bookings by reference, name, phone, or email (status=booked only)."""
+    q = (request.args.get('q') or '').strip()
+    if not q:
+        return jsonify({'success': False, 'error': 'Search query required.'}), 400
+    q_like = f"%{q}%"
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    # Search by booking_ref (exact), or partial match on name, phone, or email
+    cursor.execute('''
+        SELECT booking_ref, first_name, middle_name, last_name, name, phone, email, dob, appointment_date, service
+        FROM appointments
+        WHERE status = 'booked' AND (
+            booking_ref = ?
+            OR lower(first_name) LIKE lower(?)
+            OR lower(middle_name) LIKE lower(?)
+            OR lower(last_name) LIKE lower(?)
+            OR lower(name) LIKE lower(?)
+            OR phone LIKE ?
+            OR lower(email) LIKE lower(?)
+        )
+        ORDER BY appointment_date DESC
+        LIMIT 10
+    ''', (q.upper(), q_like, q_like, q_like, q_like, q_like, q_like))
+    rows = cursor.fetchall()
+    conn.close()
+    results = []
+    for row in rows:
+        results.append({
+            'booking_ref': row['booking_ref'],
+            'name': build_full_name(row['first_name'], row['middle_name'], row['last_name'], row['name']),
+            'phone': row['phone'],
+            'email': row['email'],
+            'dob': row['dob'],
+            'appointment_date': row['appointment_date'],
+            'service': row['service']
+        })
+    return jsonify({'success': True, 'results': results})
 # ══════════════════════════════════════
 
 @app.route('/api/slots', methods=['GET'])
 def get_slots():
-    """Return available and booked slots for a given date."""
-    try:
-        date_str = request.args.get('date', '')
-        if not date_str:
-            return jsonify({'success': False, 'error': 'Date parameter is required.'}), 400
-
-        try:
-            d = datetime.strptime(date_str, '%Y-%m-%d').date()
-        except ValueError:
-            return jsonify({'success': False, 'error': 'Invalid date format. Use YYYY-MM-DD.'}), 400
-
-        if d < date.today():
-            return jsonify({'success': False, 'error': 'Cannot view slots for past dates.'}), 400
-
-        day_of_week = d.weekday()  # 0=Mon, 6=Sun
-
-        if day_of_week == 6:  # Sunday
-            return jsonify({'success': True, 'sunday': True, 'slots': [], 'message': 'Sundays are by appointment only. Please contact us directly via WhatsApp.'})
-
-        all_slots = SLOTS_MON_FRI if day_of_week < 5 else SLOTS_SATURDAY
-
-        # Get booked slots for this date
-        conn = sqlite3.connect(DB_PATH)
-        cursor = conn.cursor()
-        cursor.execute("SELECT time_slot FROM appointments WHERE appointment_date = ? AND status = 'booked'", (date_str,))
-        booked = {row[0] for row in cursor.fetchall()}
-        conn.close()
-
-        slots = []
-        for s in all_slots:
-            slots.append({'time': s, 'booked': s in booked})
-
-        return jsonify({'success': True, 'sunday': False, 'slots': slots, 'date': date_str})
-
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
+    """Legacy endpoint retained for compatibility after removing time-slot booking."""
+    return jsonify({
+        'success': False,
+        'error': 'Time-slot booking has been removed. Please choose your preferred appointment date only.'
+    }), 410
 
 
 @app.route('/api/book', methods=['POST'])
 def book_appointment():
-    """Book an appointment slot."""
+    """Book an appointment for a selected date."""
     try:
-        data = request.get_json()
-        name = data.get('name', '').strip()
+        data = request.get_json(silent=True) or {}
+        first_name = data.get('first_name', '').strip()
+        middle_name = data.get('middle_name', '').strip()
+        last_name = data.get('last_name', '').strip()
         phone = data.get('phone', '').strip()
         email = data.get('email', '').strip()
         service = data.get('service', '').strip()
+        dob = data.get('dob', '').strip()
         appt_date = data.get('date', '').strip()
-        time_slot = data.get('time_slot', '').strip()
+        name = build_full_name(first_name, middle_name, last_name)
 
-        if not name or not phone or not email or not appt_date or not time_slot:
-            return jsonify({'success': False, 'error': 'Name, phone, email, date, and time slot are required.'}), 400
+        if not first_name or not last_name or not phone or not email or not dob or not appt_date:
+            return jsonify({'success': False, 'error': 'First name, last name, DOB, phone, email, and date are required.'}), 400
 
-        # Validate date
-        try:
-            d = datetime.strptime(appt_date, '%Y-%m-%d').date()
-        except ValueError:
-            return jsonify({'success': False, 'error': 'Invalid date format.'}), 400
+        _, date_error = parse_booking_date(appt_date)
+        if date_error:
+            return jsonify({'success': False, 'error': date_error}), 400
 
-        if d < date.today():
-            return jsonify({'success': False, 'error': 'Cannot book past dates.'}), 400
+        _, dob_error = parse_dob(dob)
+        if dob_error:
+            return jsonify({'success': False, 'error': dob_error}), 400
 
-        booking_ref = generate_booking_ref()
         now = datetime.now().isoformat()
 
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
         try:
+            booking_ref = generate_unique_booking_ref(cursor)
             cursor.execute('''
-                INSERT INTO appointments (booking_ref, name, phone, email, service, appointment_date, time_slot, status, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, 'booked', ?, ?)
-            ''', (booking_ref, name, phone, email, service, appt_date, time_slot, now, now))
+                INSERT INTO appointments (
+                    booking_ref, name, first_name, middle_name, last_name, phone, email, service, dob,
+                    appointment_date, time_slot, status, created_at, updated_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'booked', ?, ?)
+            ''', (booking_ref, name, first_name, middle_name, last_name, phone, email, service, dob, appt_date, '', now, now))
             conn.commit()
         except sqlite3.IntegrityError:
             conn.close()
-            return jsonify({'success': False, 'error': 'This slot has just been booked by someone else. Please choose another slot.'}), 409
+            return jsonify({'success': False, 'error': 'Unable to save the appointment right now. Please try again.'}), 409
         conn.close()
 
         # Build WhatsApp message to owner
@@ -385,11 +469,11 @@ def book_appointment():
             f"Phone: {phone}",
             f"Email: {email}",
         ]
+        wa_lines.append(f"DOB: {dob}")
         if service:
             wa_lines.append(f"Service: {service}")
         wa_lines.extend([
             f"Date: {appt_date}",
-            f"Time: {time_slot}",
             f"Booking Ref: {booking_ref}",
         ])
         wa_text = urllib.parse.quote('\n'.join(wa_lines))
@@ -398,7 +482,13 @@ def book_appointment():
         return jsonify({
             'success': True,
             'booking_ref': booking_ref,
-            'message': f'Appointment booked! Your reference: {booking_ref}. Please save this for rescheduling.',
+            'name': name,
+            'first_name': first_name,
+            'middle_name': middle_name,
+            'last_name': last_name,
+            'dob': dob,
+            'appointment_date': appt_date,
+            'message': f'Appointment booked for {appt_date}! Your reference: {booking_ref}. Please save this for rescheduling.',
             'whatsapp_url': whatsapp_url
         })
 
@@ -424,12 +514,15 @@ def get_booking(booking_ref):
             'success': True,
             'booking': {
                 'booking_ref': row['booking_ref'],
-                'name': row['name'],
+                'name': build_full_name(row['first_name'], row['middle_name'], row['last_name'], row['name']),
+                'first_name': row['first_name'] if 'first_name' in row.keys() else '',
+                'middle_name': row['middle_name'] if 'middle_name' in row.keys() else '',
+                'last_name': row['last_name'] if 'last_name' in row.keys() else '',
                 'phone': row['phone'],
                 'email': row['email'],
                 'service': row['service'],
+                'dob': row['dob'] if 'dob' in row.keys() else '',
                 'appointment_date': row['appointment_date'],
-                'time_slot': row['time_slot'],
                 'status': row['status']
             }
         })
@@ -440,22 +533,17 @@ def get_booking(booking_ref):
 
 @app.route('/api/reschedule/<booking_ref>', methods=['PUT'])
 def reschedule_appointment(booking_ref):
-    """Reschedule an existing booking to a new date/time."""
+    """Reschedule an existing booking to a new date."""
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         new_date = data.get('new_date', '').strip()
-        new_time = data.get('new_time_slot', '').strip()
 
-        if not new_date or not new_time:
-            return jsonify({'success': False, 'error': 'New date and time slot are required.'}), 400
+        if not new_date:
+            return jsonify({'success': False, 'error': 'A new appointment date is required.'}), 400
 
-        try:
-            d = datetime.strptime(new_date, '%Y-%m-%d').date()
-        except ValueError:
-            return jsonify({'success': False, 'error': 'Invalid date format.'}), 400
-
-        if d < date.today():
-            return jsonify({'success': False, 'error': 'Cannot reschedule to a past date.'}), 400
+        _, date_error = parse_booking_date(new_date)
+        if date_error:
+            return jsonify({'success': False, 'error': date_error.replace('book', 'reschedule to')}), 400
 
         ref = booking_ref.upper()
         now = datetime.now().isoformat()
@@ -471,19 +559,11 @@ def reschedule_appointment(booking_ref):
             conn.close()
             return jsonify({'success': False, 'error': 'No active booking found with this reference.'}), 404
 
-        # Check new slot is free
-        cursor.execute("SELECT id FROM appointments WHERE appointment_date = ? AND time_slot = ? AND status = 'booked' AND booking_ref != ?",
-                        (new_date, new_time, ref))
-        conflict = cursor.fetchone()
-        if conflict:
-            conn.close()
-            return jsonify({'success': False, 'error': 'The new slot is already booked. Please choose another.'}), 409
-
         # Update booking
         cursor.execute('''
-            UPDATE appointments SET appointment_date = ?, time_slot = ?, updated_at = ?
+            UPDATE appointments SET appointment_date = ?, time_slot = '', updated_at = ?
             WHERE booking_ref = ? AND status = 'booked'
-        ''', (new_date, new_time, now, ref))
+        ''', (new_date, now, ref))
         conn.commit()
         conn.close()
 
@@ -491,18 +571,18 @@ def reschedule_appointment(booking_ref):
         wa_lines = [
             "🔄 Appointment Rescheduled!",
             "",
-            f"Name: {original['name']}",
+            f"Name: {build_full_name(original['first_name'], original['middle_name'], original['last_name'], original['name'])}",
             f"Phone: {original['phone']}",
             f"Ref: {ref}",
-            f"Old: {original['appointment_date']} at {original['time_slot']}",
-            f"New: {new_date} at {new_time}",
+            f"Old Date: {original['appointment_date']}",
+            f"New Date: {new_date}",
         ]
         wa_text = urllib.parse.quote('\n'.join(wa_lines))
         whatsapp_url = f"https://wa.me/{BUSINESS_WHATSAPP}?text={wa_text}"
 
         return jsonify({
             'success': True,
-            'message': f'Appointment rescheduled to {new_date} at {new_time}.',
+            'message': f'Appointment rescheduled to {new_date}.',
             'whatsapp_url': whatsapp_url
         })
 
@@ -510,11 +590,118 @@ def reschedule_appointment(booking_ref):
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
+@app.route('/api/admin/login', methods=['POST'])
+def admin_login():
+    """Authenticate the appointment admin user."""
+    data = request.get_json(silent=True) or {}
+    username = data.get('username', '').strip()
+    password = data.get('password', '')
+
+    if username.casefold() != ADMIN_USERNAME.casefold() or not check_password_hash(ADMIN_PASSWORD_HASH, password):
+        return jsonify({'success': False, 'error': 'Invalid username or password.'}), 401
+
+    session['admin_username'] = ADMIN_USERNAME
+    return jsonify({'success': True, 'username': ADMIN_USERNAME})
+
+
+@app.route('/api/admin/logout', methods=['POST'])
+def admin_logout():
+    """Log out the appointment admin user."""
+    session.pop('admin_username', None)
+    return jsonify({'success': True})
+
+
+# Admin: Update appointment time_slot
+@app.route('/api/admin/appointment-time/<booking_ref>', methods=['PUT'])
+def admin_update_time_slot(booking_ref):
+    """Update the time_slot for an appointment (admin only)."""
+    if not is_admin_authenticated():
+        return jsonify({'success': False, 'error': 'Authentication required.'}), 401
+    try:
+        data = request.get_json(silent=True) or {}
+        new_time = data.get('time_slot', '').strip()
+        if not new_time:
+            return jsonify({'success': False, 'error': 'Time is required.'}), 400
+        ref = booking_ref.upper()
+        now = datetime.now().isoformat()
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute('''
+            UPDATE appointments SET time_slot = ?, updated_at = ?
+            WHERE booking_ref = ?
+        ''', (new_time, now, ref))
+        if cursor.rowcount == 0:
+            conn.close()
+            return jsonify({'success': False, 'error': 'No appointment found with this reference.'}), 404
+        conn.commit()
+        conn.close()
+        return jsonify({'success': True, 'message': f'Time updated to {new_time}.'})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+# Admin: Update appointment status
+@app.route('/api/admin/appointment-status/<booking_ref>', methods=['PUT'])
+def admin_update_status(booking_ref):
+    """Update the status for an appointment (admin only)."""
+    if not is_admin_authenticated():
+        return jsonify({'success': False, 'error': 'Authentication required.'}), 401
+    try:
+        data = request.get_json(silent=True) or {}
+        new_status = data.get('status', '').strip().lower()
+        if not new_status:
+            return jsonify({'success': False, 'error': 'Status is required.'}), 400
+        ref = booking_ref.upper()
+        now = datetime.now().isoformat()
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute('''
+            UPDATE appointments SET status = ?, updated_at = ?
+            WHERE booking_ref = ?
+        ''', (new_status, now, ref))
+        if cursor.rowcount == 0:
+            conn.close()
+            return jsonify({'success': False, 'error': 'No appointment found with this reference.'}), 404
+        conn.commit()
+        conn.close()
+        return jsonify({'success': True, 'message': f'Status updated to {new_status}.'})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+# Admin: List all appointments (admin only)
+@app.route('/api/admin/appointments', methods=['GET'])
+def admin_list_appointments():
+    if not is_admin_authenticated():
+        return jsonify({'success': False, 'error': 'Authentication required.'}), 401
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM appointments ORDER BY appointment_date DESC, created_at DESC')
+        rows = cursor.fetchall()
+        conn.close()
+
+        appointments = [dict(row) for row in rows]
+        # Summary counts
+        today = date.today().isoformat()
+        total = len(appointments)
+        upcoming = sum(1 for a in appointments if a['appointment_date'] >= today and a['status'] == 'booked')
+        today_count = sum(1 for a in appointments if a['appointment_date'] == today and a['status'] == 'booked')
+        completed_or_old = sum(1 for a in appointments if a['appointment_date'] < today or a['status'] != 'booked')
+        summary = {
+            'total': total,
+            'upcoming': upcoming,
+            'today': today_count,
+            'completed_or_old': completed_or_old
+        }
+        return jsonify({'success': True, 'appointments': appointments, 'summary': summary, 'username': session.get('admin_username', 'Sangeeta')})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
 if __name__ == '__main__':
-    init_db()
     print("Database initialized. Starting server...")
     print(f"SMTP configured: {SMTP_HOST}:{SMTP_PORT} as {SMTP_USER}")
     if not SMTP_PASS:
         print("⚠️  SMTP_PASS not set. Set it via environment variable: set SMTP_PASS=your_app_password")
     print("Visit http://localhost:5000")
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=6000)

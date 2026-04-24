@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Appointments Admin - NumbersNMe</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=fallback">
+    <style>
+        :root {
+            --admin-bg: #0f2d30;
+            --admin-card: #174c4f;
+            --admin-accent: #d4af37;
+            --admin-soft: rgba(212, 175, 55, 0.14);
+            --admin-text: rgba(255,255,255,0.88);
+            --admin-muted: rgba(255,255,255,0.6);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(180deg, #143638 0%, #0c2022 100%);
+            color: var(--admin-text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .admin-wrap {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 40px 20px 60px;
+        }
+
+        .admin-hero {
+            background: radial-gradient(circle at top, rgba(212,175,55,0.18), transparent 45%), #123336;
+            border: 1px solid rgba(212,175,55,0.18);
+            border-radius: 24px;
+            padding: 28px;
+            box-shadow: 0 18px 50px rgba(0,0,0,0.25);
+            margin-bottom: 24px;
+        }
+
+        .admin-hero h1 {
+            margin: 0 0 10px;
+            color: var(--admin-accent);
+            font-size: clamp(1.8rem, 3vw, 2.5rem);
+        }
+
+        .admin-hero p {
+            margin: 0;
+            color: var(--admin-muted);
+            max-width: 760px;
+            line-height: 1.7;
+        }
+
+        .admin-card {
+            background: var(--admin-card);
+            border: 1px solid rgba(212,175,55,0.14);
+            border-radius: 20px;
+            box-shadow: 0 14px 40px rgba(0,0,0,0.22);
+        }
+
+        .login-card {
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        .login-card h2,
+        .panel-title {
+            margin: 0 0 8px;
+            color: var(--admin-accent);
+        }
+
+        .panel-subtitle {
+            margin: 0 0 24px;
+            color: var(--admin-muted);
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: rgba(255,255,255,0.78);
+            font-size: 0.92rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid rgba(212,175,55,0.2);
+            border-radius: 12px;
+            background: #edf5f3;
+            color: #1b2930;
+            padding: 13px 14px;
+            font-size: 0.96rem;
+            font-family: inherit;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--admin-accent);
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.16);
+        }
+
+        .admin-btn,
+        .ghost-btn {
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+        }
+
+        .admin-btn {
+            width: 100%;
+            padding: 14px 18px;
+            background: linear-gradient(135deg, #d4af37, #b8962e);
+            color: #182224;
+        }
+
+        .ghost-btn {
+            padding: 11px 16px;
+            background: transparent;
+            color: var(--admin-accent);
+            border: 1px solid rgba(212,175,55,0.24);
+        }
+
+        .admin-btn:hover,
+        .ghost-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .status-box {
+            display: none;
+            margin-bottom: 18px;
+            padding: 13px 15px;
+            border-radius: 12px;
+            font-size: 0.94rem;
+            line-height: 1.5;
+        }
+
+        .status-box.show {
+            display: block;
+        }
+
+        .status-box.error {
+            background: rgba(220,53,69,0.15);
+            border: 1px solid rgba(220,53,69,0.35);
+            color: #ff9292;
+        }
+
+        .status-box.success {
+            background: rgba(40,167,69,0.15);
+            border: 1px solid rgba(40,167,69,0.35);
+            color: #8fe3a0;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar .welcome {
+            color: var(--admin-muted);
+            font-size: 0.95rem;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .summary-card {
+            padding: 20px;
+        }
+
+        .summary-card .label {
+            color: var(--admin-muted);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .summary-card .value {
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .table-card {
+            padding: 24px;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: 16px;
+            border: 1px solid rgba(212,175,55,0.14);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 980px;
+            background: rgba(10, 25, 27, 0.18);
+        }
+
+        th,
+        td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            vertical-align: top;
+        }
+
+        th {
+            color: var(--admin-accent);
+            font-size: 0.88rem;
+            font-weight: 600;
+            background: rgba(0,0,0,0.12);
+            position: sticky;
+            top: 0;
+        }
+
+        td {
+            color: var(--admin-text);
+            font-size: 0.92rem;
+        }
+
+        .booking-ref {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(212,175,55,0.12);
+            color: var(--admin-accent);
+            font-weight: 600;
+            letter-spacing: 0.04em;
+        }
+
+        .name-breakdown {
+            margin-top: 6px;
+            font-size: 0.82rem;
+            line-height: 1.5;
+            color: var(--admin-muted);
+        }
+
+        .status-pill {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(93, 219, 114, 0.14);
+            color: #9fe6a3;
+            text-transform: capitalize;
+            font-weight: 600;
+            font-size: 0.82rem;
+        }
+
+        .muted {
+            color: var(--admin-muted);
+        }
+
+        .mobile-list {
+            display: none;
+            gap: 14px;
+        }
+
+        .mobile-item {
+            padding: 18px;
+        }
+
+        .mobile-item h3 {
+            margin: 0 0 10px;
+            color: var(--admin-accent);
+            font-size: 1rem;
+        }
+
+        .mobile-item p {
+            margin: 6px 0;
+            color: var(--admin-text);
+            font-size: 0.92rem;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 920px) {
+            .summary-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-wrap {
+                padding: 24px 14px 40px;
+            }
+
+            .admin-hero,
+            .login-card,
+            .table-card,
+            .summary-card {
+                border-radius: 16px;
+            }
+
+            .table-wrap {
+                display: none;
+            }
+
+            .mobile-list {
+                display: grid;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .toolbar {
+                align-items: stretch;
+            }
+
+            .toolbar .actions {
+                display: grid;
+                grid-template-columns: 1fr;
+                width: 100%;
+            }
+
+            .ghost-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-wrap">
+        <section class="admin-hero">
+            <h1>Appointments Dashboard</h1>
+            <p>Securely review all captured appointment details, including split customer name fields, DOB, contact information, selected service, booking reference, appointment date, and booking timestamps.</p>
+        </section>
+
+        <section id="login-view" class="admin-card login-card">
+            <h2>Sangeeta Login</h2>
+            <p class="panel-subtitle">Use your admin username and password to view the appointment records.</p>
+            <div id="login-status" class="status-box"></div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" autocomplete="username" placeholder="Enter username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" autocomplete="current-password" placeholder="Enter password" required>
+                </div>
+                <button type="submit" class="admin-btn" id="login-btn">Sign In</button>
+            </form>
+        </section>
+
+        <section id="dashboard-view" class="hidden">
+            <div class="toolbar">
+                <div>
+                    <h2 class="panel-title">Captured Appointment Details</h2>
+                    <p class="welcome">Signed in as <strong id="admin-name">Sangeeta</strong></p>
+                </div>
+                <div class="actions" style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <button type="button" class="ghost-btn" id="refresh-btn">Refresh</button>
+                    <button type="button" class="ghost-btn" id="logout-btn">Log Out</button>
+                </div>
+            </div>
+
+            <div id="dashboard-status" class="status-box"></div>
+
+            <div class="summary-grid">
+                <div class="admin-card summary-card">
+                    <div class="label">Total Appointments</div>
+                    <div class="value" id="sum-total">0</div>
+                </div>
+                <div class="admin-card summary-card">
+                    <div class="label">Upcoming</div>
+                    <div class="value" id="sum-upcoming">0</div>
+                </div>
+                <div class="admin-card summary-card">
+                    <div class="label">Today</div>
+                    <div class="value" id="sum-today">0</div>
+                </div>
+                <div class="admin-card summary-card">
+                    <div class="label">Past / Other Status</div>
+                    <div class="value" id="sum-old">0</div>
+                </div>
+            </div>
+
+            <div class="admin-card table-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:18px;">
+                    <div>
+                        <h3 style="margin:0; color:var(--admin-accent);">Appointment Records</h3>
+                        <p class="panel-subtitle" style="margin:6px 0 0;">Newest entries appear first.</p>
+                    </div>
+                     <div style="flex:1; text-align:right; min-width:220px;">
+                           <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:flex-end;">
+                               <input id="from-date" type="date" style="padding:8px 10px; border-radius:8px; border:1px solid #d4af37; font-size:1em; min-width:120px;" placeholder="From" />
+                               <span style="color:#d4af37;">to</span>
+                               <input id="to-date" type="date" style="padding:8px 10px; border-radius:8px; border:1px solid #d4af37; font-size:1em; min-width:120px;" placeholder="To" />
+                               <input id="search-input" type="text" placeholder="Search by name or contact..." style="padding:8px 14px; border-radius:8px; border:1px solid #d4af37; width:220px; font-size:1em;" />
+                           </div>
+                    </div>
+                </div>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Booking Ref</th>
+                                <th>Name</th>
+                                <th>DOB</th>
+                                <th>Contact</th>
+                                <th>Service</th>
+                                <th>Date of Appointment</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="appointments-body"></tbody>
+                    </table>
+                </div>
+
+                <div id="appointments-mobile" class="mobile-list"></div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const loginView = document.getElementById('login-view');
+        const dashboardView = document.getElementById('dashboard-view');
+        const loginStatus = document.getElementById('login-status');
+        const dashboardStatus = document.getElementById('dashboard-status');
+        const appointmentsBody = document.getElementById('appointments-body');
+        const appointmentsMobile = document.getElementById('appointments-mobile');
+
+        function showStatus(el, type, message) {
+            el.className = `status-box show ${type}`;
+            el.textContent = message;
+        }
+
+        function hideStatus(el) {
+            el.className = 'status-box';
+            el.textContent = '';
+        }
+
+        function formatDate(value) {
+            if (!value) return '—';
+            const parsed = new Date(`${value}T00:00:00`);
+            return Number.isNaN(parsed.getTime()) ? value : parsed.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+        }
+
+        function formatDateTime(value) {
+            if (!value) return '—';
+            const parsed = new Date(value);
+            return Number.isNaN(parsed.getTime()) ? value : parsed.toLocaleString('en-IN', {
+                day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+            });
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        let allAppointments = [];
+
+        function renderAppointments(items) {
+            if (!items.length) {
+                appointmentsBody.innerHTML = '<tr><td colspan="8" class="muted">No appointments found yet.</td></tr>';
+                appointmentsMobile.innerHTML = '<div class="admin-card mobile-item"><p class="muted">No appointments found yet.</p></div>';
+                return;
+            }
+
+            const statusOptions = [
+                { value: 'booked', label: 'Booked' },
+                { value: 'confirmed', label: 'Confirmed' },
+                { value: 'completed', label: 'Completed' },
+                { value: 'cancelled', label: 'Cancelled' }
+            ];
+
+            appointmentsBody.innerHTML = items.map(item => `
+                <tr>
+                    <td><span class="booking-ref">${escapeHtml(item.booking_ref)}</span></td>
+                    <td>
+                        <div>${escapeHtml(item.name)}</div>
+                        <div class="name-breakdown">
+                            First: ${escapeHtml(item.first_name || '—')}<br>
+                            Middle: ${escapeHtml(item.middle_name || '—')}<br>
+                            Last: ${escapeHtml(item.last_name || '—')}
+                        </div>
+                    </td>
+                    <td>${escapeHtml(formatDate(item.dob))}</td>
+                    <td>
+                        <div>${escapeHtml(item.phone)}</div>
+                        <div class="muted">${escapeHtml(item.email)}</div>
+                    </td>
+                    <td>${escapeHtml(item.service || 'Not specified')}</td>
+                    <td>${escapeHtml(formatDate(item.appointment_date))}</td>
+                    <td>
+                        <span id="time-display-${item.booking_ref}">${escapeHtml(item.time_slot || '—')}</span>
+                        <input id="time-input-${item.booking_ref}" type="datetime-local" value="${item.time_slot ? item.time_slot.replace(' ', 'T') : ''}" style="display:none;width:170px;" />
+                        <button type="button" class="ghost-btn" style="padding:4px 10px;font-size:0.9em;" onclick="editTime('${item.booking_ref}')" id="edit-btn-${item.booking_ref}">Edit</button>
+                        <button type="button" class="ghost-btn" style="padding:4px 10px;font-size:0.9em;display:none;" onclick="saveTime('${item.booking_ref}')" id="save-btn-${item.booking_ref}">Save</button>
+                    </td>
+                    <td>
+                        <span id="status-display-${item.booking_ref}" class="status-pill">${escapeHtml(item.status || 'booked')}</span>
+                        <select id="status-input-${item.booking_ref}" style="display:none;width:120px;">
+                            ${statusOptions.map(opt => `<option value="${opt.value}" ${item.status === opt.value ? 'selected' : ''}>${opt.label}</option>`).join('')}
+                        </select>
+                        <button type="button" class="ghost-btn" style="padding:4px 10px;font-size:0.9em;" onclick="editStatus('${item.booking_ref}')" id="edit-status-btn-${item.booking_ref}">Edit</button>
+                        <button type="button" class="ghost-btn" style="padding:4px 10px;font-size:0.9em;display:none;" onclick="saveStatus('${item.booking_ref}')" id="save-status-btn-${item.booking_ref}">Save</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Inline time edit logic
+            window.editTime = function(bookingRef) {
+                document.getElementById('time-display-' + bookingRef).style.display = 'none';
+                document.getElementById('time-input-' + bookingRef).style.display = 'inline-block';
+                document.getElementById('edit-btn-' + bookingRef).style.display = 'none';
+                document.getElementById('save-btn-' + bookingRef).style.display = 'inline-block';
+            };
+
+            window.saveTime = async function(bookingRef) {
+                const input = document.getElementById('time-input-' + bookingRef);
+                const newTime = input.value.trim();
+                if (!newTime) {
+                    showStatus(dashboardStatus, 'error', 'Time cannot be empty.');
+                    return;
+                }
+                try {
+                    const resp = await fetch(`/api/admin/appointment-time/${bookingRef}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'same-origin',
+                        body: JSON.stringify({ time_slot: newTime.replace('T', ' ') })
+                    });
+                    const data = await resp.json();
+                    if (!resp.ok || !data.success) {
+                        showStatus(dashboardStatus, 'error', data.error || 'Failed to update time.');
+                        return;
+                    }
+                    showStatus(dashboardStatus, 'success', data.message || 'Time updated.');
+                    await loadAppointments();
+                } catch (e) {
+                    showStatus(dashboardStatus, 'error', e.message || 'Failed to update time.');
+                }
+            };
+
+            // Inline status edit logic
+            window.editStatus = function(bookingRef) {
+                document.getElementById('status-display-' + bookingRef).style.display = 'none';
+                document.getElementById('status-input-' + bookingRef).style.display = 'inline-block';
+                document.getElementById('edit-status-btn-' + bookingRef).style.display = 'none';
+                document.getElementById('save-status-btn-' + bookingRef).style.display = 'inline-block';
+            };
+
+            window.saveStatus = async function(bookingRef) {
+                const input = document.getElementById('status-input-' + bookingRef);
+                const newStatus = input.value;
+                if (!newStatus) {
+                    showStatus(dashboardStatus, 'error', 'Status cannot be empty.');
+                    return;
+                }
+                try {
+                    const resp = await fetch(`/api/admin/appointment-status/${bookingRef}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'same-origin',
+                        body: JSON.stringify({ status: newStatus })
+                    });
+                    const data = await resp.json();
+                    if (!resp.ok || !data.success) {
+                        showStatus(dashboardStatus, 'error', data.error || 'Failed to update status.');
+                        return;
+                    }
+                    showStatus(dashboardStatus, 'success', data.message || 'Status updated.');
+                    await loadAppointments();
+                } catch (e) {
+                    showStatus(dashboardStatus, 'error', e.message || 'Failed to update status.');
+                }
+            };
+
+            appointmentsMobile.innerHTML = items.map(item => `
+                <div class="admin-card mobile-item">
+                    <h3>${escapeHtml(item.name)}</h3>
+                    <p><strong>Booking Ref:</strong> <span class="booking-ref">${escapeHtml(item.booking_ref)}</span></p>
+                    <p><strong>First Name:</strong> ${escapeHtml(item.first_name || '—')}</p>
+                    <p><strong>Middle Name:</strong> ${escapeHtml(item.middle_name || '—')}</p>
+                    <p><strong>Last Name:</strong> ${escapeHtml(item.last_name || '—')}</p>
+                    <p><strong>DOB:</strong> ${escapeHtml(formatDate(item.dob))}</p>
+                    <p><strong>Phone:</strong> ${escapeHtml(item.phone)}</p>
+                    <p><strong>Email:</strong> ${escapeHtml(item.email)}</p>
+                    <p><strong>Service:</strong> ${escapeHtml(item.service || 'Not specified')}</p>
+                    <p><strong>Appointment Date:</strong> ${escapeHtml(formatDate(item.appointment_date))}</p>
+                    <p><strong>Time:</strong> <span id="mobile-time-display-${item.booking_ref}">${escapeHtml(item.time_slot || '—')}</span></p>
+                    <p><strong>Status:</strong> <span class="status-pill">${escapeHtml(item.status || 'booked')}</span></p>
+                </div>
+            `).join('');
+        }
+
+        function renderSummary(summary) {
+            document.getElementById('sum-total').textContent = summary.total ?? 0;
+            document.getElementById('sum-upcoming').textContent = summary.upcoming ?? 0;
+            document.getElementById('sum-today').textContent = summary.today ?? 0;
+            document.getElementById('sum-old').textContent = summary.completed_or_old ?? 0;
+        }
+
+        async function loadAppointments(showSuccess = false) {
+            hideStatus(dashboardStatus);
+            const response = await fetch('/api/admin/appointments', { credentials: 'same-origin' });
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Unable to load appointments.');
+            }
+
+            document.getElementById('admin-name').textContent = data.username || 'Sangeeta';
+            renderSummary(data.summary || {});
+            allAppointments = data.appointments || [];
+            filterAndRenderAppointments();
+            if (showSuccess) {
+                showStatus(dashboardStatus, 'success', 'Appointment records refreshed successfully.');
+            }
+        }
+
+         function filterAndRenderAppointments() {
+             const q = (document.getElementById('search-input').value || '').toLowerCase().trim();
+             const fromDate = document.getElementById('from-date').value;
+             const toDate = document.getElementById('to-date').value;
+             let filtered = allAppointments;
+             // Filter by search query
+             if (q) {
+                 filtered = filtered.filter(item => {
+                     return (
+                         (item.name && item.name.toLowerCase().includes(q)) ||
+                         (item.phone && item.phone.toLowerCase().includes(q)) ||
+                         (item.email && item.email.toLowerCase().includes(q))
+                     );
+                 });
+             }
+             // Filter by date range
+             if (fromDate) {
+                 filtered = filtered.filter(item => item.appointment_date && item.appointment_date >= fromDate);
+             }
+             if (toDate) {
+                 filtered = filtered.filter(item => item.appointment_date && item.appointment_date <= toDate);
+             }
+             renderAppointments(filtered);
+         }
+
+         document.addEventListener('DOMContentLoaded', function() {
+             const searchInput = document.getElementById('search-input');
+             const fromDateInput = document.getElementById('from-date');
+             const toDateInput = document.getElementById('to-date');
+             if (searchInput) {
+                 searchInput.addEventListener('input', filterAndRenderAppointments);
+             }
+             if (fromDateInput) {
+                 fromDateInput.addEventListener('change', filterAndRenderAppointments);
+             }
+             if (toDateInput) {
+                 toDateInput.addEventListener('change', filterAndRenderAppointments);
+             }
+         });
+
+        async function tryRestoreSession() {
+            try {
+                await loadAppointments(false);
+                loginView.classList.add('hidden');
+                dashboardView.classList.remove('hidden');
+            } catch (error) {
+                loginView.classList.remove('hidden');
+                dashboardView.classList.add('hidden');
+            }
+        }
+
+        document.getElementById('login-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            hideStatus(loginStatus);
+
+            const btn = document.getElementById('login-btn');
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+
+            btn.disabled = true;
+            btn.textContent = 'Signing In...';
+
+            try {
+                const response = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+                    throw new Error(data.error || 'Login failed.');
+                }
+
+                await loadAppointments(false);
+                loginView.classList.add('hidden');
+                dashboardView.classList.remove('hidden');
+                showStatus(dashboardStatus, 'success', `Welcome, ${data.username || 'Sangeeta'}! Appointment details are ready to view.`);
+                this.reset();
+            } catch (error) {
+                showStatus(loginStatus, 'error', error.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Sign In';
+            }
+        });
+
+        document.getElementById('refresh-btn').addEventListener('click', async function () {
+            try {
+                await loadAppointments(true);
+            } catch (error) {
+                showStatus(dashboardStatus, 'error', error.message);
+            }
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', async function () {
+            await fetch('/api/admin/logout', {
+                method: 'POST',
+                credentials: 'same-origin'
+            });
+            hideStatus(dashboardStatus);
+            dashboardView.classList.add('hidden');
+            loginView.classList.remove('hidden');
+        });
+
+        tryRestoreSession();
+    </script>
+</body>
+</html>
+
