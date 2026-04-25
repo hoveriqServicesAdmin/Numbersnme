@@ -22,6 +22,28 @@ app.secret_key = os.environ.get('SECRET_KEY', 'numbersnme-secret-key-2026')
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
+# Add CORS headers for browser requests
+@app.after_request
+def add_cors_headers(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
+
+@app.route('/health', methods=['GET'])
+def health_check():
+    """Health check endpoint"""
+    return jsonify({'status': 'ok', 'service': 'NumbersNMe Admin API'})
+
+@app.before_request
+def handle_preflight():
+    """Handle preflight requests"""
+    if request.method == 'OPTIONS':
+        return '', 204
+
 DB_PATH = os.path.join(os.path.dirname(__file__), 'numbersnme.db')
 
 BUSINESS_WHATSAPP = '918425985792'
@@ -703,5 +725,6 @@ if __name__ == '__main__':
     print(f"SMTP configured: {SMTP_HOST}:{SMTP_PORT} as {SMTP_USER}")
     if not SMTP_PASS:
         print("⚠️  SMTP_PASS not set. Set it via environment variable: set SMTP_PASS=your_app_password")
-    print("Visit http://localhost:5000")
-    app.run(debug=True, host='0.0.0.0', port=6000)
+    print("✅ Visit http://localhost:5000")
+    print("🌐 Or visit http://192.168.1.37:5000 from another device")
+    app.run(debug=True, host='0.0.0.0', port=5000, use_reloader=False)

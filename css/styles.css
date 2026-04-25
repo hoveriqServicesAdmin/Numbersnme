@@ -342,6 +342,16 @@ header .custom-logo-link img {
     align-items: center;
     justify-content: flex-end;
     flex-shrink: 0;
+    gap: 8px;
+}
+
+.site-header-primary-section-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    flex-wrap: wrap;
+    min-height: 44px;
 }
 
 .ast-header-button-1 {
@@ -446,12 +456,15 @@ header .custom-logo-link img {
 .menu-item-has-button {
     display: flex !important;
     align-items: center;
-    margin-left: 10px;
+    margin-left: 12px;
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 .menu-item-has-button .ast-custom-button-link {
     text-decoration: none;
     display: flex;
     align-items: center;
+    white-space: nowrap;
 }
 .menu-item-has-button .ast-custom-button {
     background: #006B4F !important;
@@ -3039,3 +3052,33 @@ body .is-layout-grid { display: grid; }
     color: #fff;
     background: #6a029e;
 }
+
+/* ══════ HEADER BUTTONS SPACING & RESPONSIVE ══════ */
+@media (max-width: 1024px) {
+    .site-header-primary-section-right {
+        gap: 6px;
+        min-height: 40px;
+    }
+
+    .menu-item-has-button {
+        margin-left: 8px;
+    }
+}
+
+@media (max-width: 768px) {
+    .site-header-primary-section-right {
+        gap: 4px;
+        min-height: 36px;
+        flex-wrap: nowrap;
+    }
+
+    .menu-item-has-button {
+        margin-left: 4px;
+    }
+
+    .menu-item-has-button .ast-custom-button {
+        font-size: 11px !important;
+        padding: 6px 12px;
+    }
+}
+
