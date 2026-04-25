@@ -350,7 +350,7 @@
         </section>
 
         <section id="login-view" class="admin-card login-card">
-            <h2>Sangeeta Login</h2>
+            <h2>Sangitha Login</h2>
             <p class="panel-subtitle">Use your admin username and password to view the appointment records.</p>
             <div id="login-status" class="status-box"></div>
             <form id="login-form">
@@ -370,7 +370,7 @@
             <div class="toolbar">
                 <div>
                     <h2 class="panel-title">Captured Appointment Details</h2>
-                    <p class="welcome">Signed in as <strong id="admin-name">Sangeeta</strong></p>
+                    <p class="welcome">Signed in as <strong id="admin-name">Sangitha</strong></p>
                 </div>
                 <div class="actions" style="display:flex; gap:10px; flex-wrap:wrap;">
                     <button type="button" class="ghost-btn" id="refresh-btn">Refresh</button>
@@ -632,7 +632,7 @@
                 throw new Error(data.error || 'Unable to load appointments.');
             }
 
-            document.getElementById('admin-name').textContent = data.username || 'Sangeeta';
+            document.getElementById('admin-name').textContent = data.username || 'Sangitha';
             renderSummary(data.summary || {});
             allAppointments = data.appointments || [];
             filterAndRenderAppointments();
@@ -719,7 +719,7 @@
                 await loadAppointments(false);
                 loginView.classList.add('hidden');
                 dashboardView.classList.remove('hidden');
-                showStatus(dashboardStatus, 'success', `Welcome, ${data.username || 'Sangeeta'}! Appointment details are ready to view.`);
+                showStatus(dashboardStatus, 'success', `Welcome, ${data.username || 'Sangitha'}! Appointment details are ready to view.`);
                 this.reset();
             } catch (error) {
                 showStatus(loginStatus, 'error', error.message);

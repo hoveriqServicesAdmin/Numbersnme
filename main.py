@@ -25,7 +25,7 @@ app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 DB_PATH = os.path.join(os.path.dirname(__file__), 'numbersnme.db')
 
 BUSINESS_WHATSAPP = '918425985792'
-ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME', 'Sangeeta')
+ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME', 'Sangitha')
 ADMIN_PASSWORD_HASH = generate_password_hash(os.environ.get('ADMIN_PASSWORD', 'numbersnme2026'))
 
 # ── Email Configuration ──
@@ -693,7 +693,7 @@ def admin_list_appointments():
             'today': today_count,
             'completed_or_old': completed_or_old
         }
-        return jsonify({'success': True, 'appointments': appointments, 'summary': summary, 'username': session.get('admin_username', 'Sangeeta')})
+        return jsonify({'success': True, 'appointments': appointments, 'summary': summary, 'username': session.get('admin_username', 'Sangitha')})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 
