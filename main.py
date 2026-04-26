@@ -727,4 +727,4 @@ if __name__ == '__main__':
         print("⚠️  SMTP_PASS not set. Set it via environment variable: set SMTP_PASS=your_app_password")
     print("✅ Visit http://localhost:5000")
     print("🌐 Or visit http://192.168.1.37:5000 from another device")
-    app.run(debug=True, host='0.0.0.0', port=5000, use_reloader=False)
+    app.run(debug=True, host='0.0.0.0', port=7000, use_reloader=False)
